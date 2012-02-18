@@ -265,7 +265,7 @@ public:
                 ValrothGUID = summoned->GetGUID();
 
             summoned->AddThreat(me, 0.0f);
-            summoned->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_OOC_NOT_ATTACKABLE);
+            summoned->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_PC);
         }
 
         void SummonAcolyte(uint32 uiAmount)
@@ -603,7 +603,7 @@ public:
             ExecuteSpeech_Counter = 0;
             PlayerGUID = 0;
 
-            me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_OOC_NOT_ATTACKABLE);
+            me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_PC);
         }
 
         bool MeetQuestCondition(Unit* player)
@@ -700,7 +700,7 @@ public:
                                 case 9:
                                     DoScriptText(SAY_EXEC_TIME_6, me, player);
                                     me->SetStandState(UNIT_STAND_STATE_KNEEL);
-                                    me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_OOC_NOT_ATTACKABLE);
+                                    me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_PC);
                                     break;
                                 case 10: DoScriptText(SAY_EXEC_WAITING, me, player); break;
                                 case 11:
@@ -728,7 +728,7 @@ public:
                                 case 9:
                                     DoScriptText(SAY_EXEC_TIME_8, me, player);
                                     me->SetStandState(UNIT_STAND_STATE_KNEEL);
-                                    me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_OOC_NOT_ATTACKABLE);
+                                    me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_PC);
                                     break;
                                 case 10: DoScriptText(SAY_EXEC_WAITING, me, player); break;
                                 case 11:
@@ -756,7 +756,7 @@ public:
                                 case 9:
                                     DoScriptText(SAY_EXEC_TIME_3, me, player);
                                     me->SetStandState(UNIT_STAND_STATE_KNEEL);
-                                    me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_OOC_NOT_ATTACKABLE);
+                                    me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_PC);
                                     break;
                                 case 10: DoScriptText(SAY_EXEC_WAITING, me, player); break;
                                 case 11:
@@ -784,7 +784,7 @@ public:
                                 case 9:
                                     DoScriptText(SAY_EXEC_TIME_7, me, player);
                                     me->SetStandState(UNIT_STAND_STATE_KNEEL);
-                                    me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_OOC_NOT_ATTACKABLE);
+                                    me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_PC);
                                     break;
                                 case 10: DoScriptText(SAY_EXEC_WAITING, me, player); break;
                                 case 11:
@@ -812,7 +812,7 @@ public:
                                 case 9:
                                     DoScriptText(SAY_EXEC_TIME_4, me, player);
                                     me->SetStandState(UNIT_STAND_STATE_KNEEL);
-                                    me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_OOC_NOT_ATTACKABLE);
+                                    me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_PC);
                                     break;
                                 case 10: DoScriptText(SAY_EXEC_WAITING, me, player); break;
                                 case 11:
@@ -840,7 +840,7 @@ public:
                                 case 9:
                                     DoScriptText(SAY_EXEC_TIME_9, me, player);
                                     me->SetStandState(UNIT_STAND_STATE_KNEEL);
-                                    me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_OOC_NOT_ATTACKABLE);
+                                    me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_PC);
                                     break;
                                 case 10: DoScriptText(SAY_EXEC_WAITING, me, player); break;
                                 case 11:
@@ -868,7 +868,7 @@ public:
                                 case 9:
                                     DoScriptText(SAY_EXEC_TIME_5, me, player);
                                     me->SetStandState(UNIT_STAND_STATE_KNEEL);
-                                    me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_OOC_NOT_ATTACKABLE);
+                                    me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_PC);
                                     break;
                                 case 10: DoScriptText(SAY_EXEC_WAITING, me, player); break;
                                 case 11:
@@ -896,7 +896,7 @@ public:
                                 case 9:
                                     DoScriptText(SAY_EXEC_TIME_10, me, player);
                                     me->SetStandState(UNIT_STAND_STATE_KNEEL);
-                                    me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_OOC_NOT_ATTACKABLE);
+                                    me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_PC);
                                     break;
                                 case 10: DoScriptText(SAY_EXEC_WAITING, me, player); break;
                                 case 11:
@@ -924,7 +924,7 @@ public:
                                 case 9:
                                     DoScriptText(SAY_EXEC_TIME_1, me, player);
                                     me->SetStandState(UNIT_STAND_STATE_KNEEL);
-                                    me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_OOC_NOT_ATTACKABLE);
+                                    me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_PC);
                                     break;
                                 case 10: DoScriptText(SAY_EXEC_WAITING, me, player); break;
                                 case 11:
@@ -952,7 +952,7 @@ public:
                                 case 9:
                                     DoScriptText(SAY_EXEC_TIME_2, me, player);
                                     me->SetStandState(UNIT_STAND_STATE_KNEEL);
-                                    me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_OOC_NOT_ATTACKABLE);
+                                    me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_PC);
                                     break;
                                 case 10: DoScriptText(SAY_EXEC_WAITING, me, player); break;
                                 case 11:

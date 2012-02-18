@@ -288,7 +288,7 @@ class boss_blood_council_controller : public CreatureScript
 
                 events.Update(diff);
 
-                if (me->HasUnitState(UNIT_STAT_CASTING))
+                if (me->HasUnitState(UNIT_STATE_CASTING))
                     return;
 
                 while (uint32 eventId = events.ExecuteEvent())
@@ -384,7 +384,7 @@ class boss_prince_keleseth_icc : public CreatureScript
                 events.Reset();
                 summons.DespawnAll();
 
-                me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_OOC_NOT_ATTACKABLE);
+                me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_PC);
                 _isEmpowered = false;
                 me->SetHealth(_spawnHealth);
                 instance->SetData(DATA_ORB_WHISPERER_ACHIEVEMENT, uint32(true));
@@ -490,7 +490,7 @@ class boss_prince_keleseth_icc : public CreatureScript
                 {
                     case ACTION_STAND_UP:
                         me->RemoveAurasDueToSpell(SPELL_FEIGN_DEATH);
-                        me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE | UNIT_FLAG_OOC_NOT_ATTACKABLE);
+                        me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE | UNIT_FLAG_IMMUNE_TO_PC);
                         me->RemoveFlag(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_DEAD);
                         me->RemoveFlag(UNIT_FIELD_FLAGS_2, UNIT_FLAG2_FEIGN_DEATH);
                         me->ForceValuesUpdateAtIndex(UNIT_NPC_FLAGS);   // was in sniff. don't ask why
@@ -536,7 +536,7 @@ class boss_prince_keleseth_icc : public CreatureScript
 
                 events.Update(diff);
 
-                if (me->HasUnitState(UNIT_STAT_CASTING))
+                if (me->HasUnitState(UNIT_STATE_CASTING))
                     return;
 
                 while (uint32 eventId = events.ExecuteEvent())
@@ -608,7 +608,7 @@ class boss_prince_taldaram_icc : public CreatureScript
                 events.Reset();
                 summons.DespawnAll();
 
-                me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_OOC_NOT_ATTACKABLE);
+                me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_PC);
                 _isEmpowered = false;
                 me->SetHealth(_spawnHealth);
                 instance->SetData(DATA_ORB_WHISPERER_ACHIEVEMENT, uint32(true));
@@ -708,7 +708,7 @@ class boss_prince_taldaram_icc : public CreatureScript
                 {
                     case ACTION_STAND_UP:
                         me->RemoveAurasDueToSpell(SPELL_FEIGN_DEATH);
-                        me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE | UNIT_FLAG_OOC_NOT_ATTACKABLE);
+                        me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE | UNIT_FLAG_IMMUNE_TO_PC);
                         me->RemoveFlag(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_DEAD);
                         me->RemoveFlag(UNIT_FIELD_FLAGS_2, UNIT_FLAG2_FEIGN_DEATH);
                         me->ForceValuesUpdateAtIndex(UNIT_NPC_FLAGS);   // was in sniff. don't ask why
@@ -754,7 +754,7 @@ class boss_prince_taldaram_icc : public CreatureScript
 
                 events.Update(diff);
 
-                if (me->HasUnitState(UNIT_STAT_CASTING))
+                if (me->HasUnitState(UNIT_STATE_CASTING))
                     return;
 
                 while (uint32 eventId = events.ExecuteEvent())
@@ -831,7 +831,7 @@ class boss_prince_valanar_icc : public CreatureScript
                 events.Reset();
                 summons.DespawnAll();
 
-                me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_OOC_NOT_ATTACKABLE);
+                me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_PC);
                 _isEmpowered = false;
                 me->SetHealth(me->GetMaxHealth());
                 instance->SetData(DATA_ORB_WHISPERER_ACHIEVEMENT, uint32(true));
@@ -945,7 +945,7 @@ class boss_prince_valanar_icc : public CreatureScript
                 {
                     case ACTION_STAND_UP:
                         me->RemoveAurasDueToSpell(SPELL_FEIGN_DEATH);
-                        me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE | UNIT_FLAG_OOC_NOT_ATTACKABLE);
+                        me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE | UNIT_FLAG_IMMUNE_TO_PC);
                         me->RemoveFlag(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_DEAD);
                         me->RemoveFlag(UNIT_FIELD_FLAGS_2, UNIT_FLAG2_FEIGN_DEATH);
                         me->ForceValuesUpdateAtIndex(UNIT_NPC_FLAGS);   // was in sniff. don't ask why
@@ -991,7 +991,7 @@ class boss_prince_valanar_icc : public CreatureScript
 
                 events.Update(diff);
 
-                if (me->HasUnitState(UNIT_STAT_CASTING))
+                if (me->HasUnitState(UNIT_STATE_CASTING))
                     return;
 
                 while (uint32 eventId = events.ExecuteEvent())
@@ -1180,7 +1180,7 @@ class npc_ball_of_flame : public CreatureScript
                     if (Player* target = ObjectAccessor::GetPlayer(*me, _chaseGUID))
                     {
                         // need to clear states now because this call is before AuraEffect is fully removed
-                        me->ClearUnitState(UNIT_STAT_CASTING | UNIT_STAT_STUNNED);
+                        me->ClearUnitState(UNIT_STATE_CASTING | UNIT_STATE_STUNNED);
                         if (target && me->Attack(target, true))
                             me->GetMotionMaster()->MoveChase(target, 1.0f);
                     }
@@ -1317,7 +1317,7 @@ class npc_dark_nucleus : public CreatureScript
                 }
 
                 DoCast(who, SPELL_SHADOW_RESONANCE_RESIST);
-                me->ClearUnitState(UNIT_STAT_CASTING);
+                me->ClearUnitState(UNIT_STATE_CASTING);
             }
 
             void MoveInLineOfSight(Unit* who)
@@ -1351,7 +1351,7 @@ class npc_dark_nucleus : public CreatureScript
                             !victim->HasAura(SPELL_SHADOW_RESONANCE_RESIST, me->GetGUID()))
                         {
                             DoCast(victim, SPELL_SHADOW_RESONANCE_RESIST);
-                            me->ClearUnitState(UNIT_STAT_CASTING);
+                            me->ClearUnitState(UNIT_STATE_CASTING);
                         }
                 }
                 else
@@ -1370,7 +1370,7 @@ class npc_dark_nucleus : public CreatureScript
                         _lockedTarget = true;
                         AttackStart(victim);
                         DoCast(victim, SPELL_SHADOW_RESONANCE_RESIST);
-                        me->ClearUnitState(UNIT_STAT_CASTING);
+                        me->ClearUnitState(UNIT_STATE_CASTING);
                     }
                 }
             }

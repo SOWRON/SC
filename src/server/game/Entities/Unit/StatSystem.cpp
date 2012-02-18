@@ -73,10 +73,8 @@ bool Player::UpdateStats(Stats stat)
     switch (stat)
     {
         case STAT_STRENGTH:
-            UpdateShieldBlockValue();
             break;
         case STAT_AGILITY:
-            UpdateArmor();
             UpdateAllCritPercentages();
             UpdateDodgePercentage();
             break;
@@ -175,9 +173,9 @@ bool Player::UpdateAllStats()
         UpdateMaxPower(Powers(i));
 
     UpdateAllRatings();
+    UpdateMasteryPercentage();
     UpdateAllCritPercentages();
     UpdateAllSpellCritChances();
-    UpdateDefenseBonusesMod();
     UpdateShieldBlockValue();
     UpdateSpellDamageAndHealingBonus();
     UpdateManaRegen();
@@ -212,6 +210,7 @@ void Player::UpdateArmor()
 
     value  = GetModifierValue(unitMod, BASE_VALUE);         // base armor (from items)
     value *= GetModifierValue(unitMod, BASE_PCT);           // armor percent from items
+    value += GetStat(STAT_AGILITY) * 2.0f;                  // armor bonus from stats
     value += GetModifierValue(unitMod, TOTAL_VALUE);
 
     //add dynamic flat mods
@@ -235,7 +234,7 @@ void Player::UpdateArmor()
 
 void Player::UpdateSpellPower()
 {
-    uint32 spellPowerFromIntellect = GetStat(STAT_INTELLECT) - 10;
+    uint32 spellPowerFromIntellect = uint32(GetStat(STAT_INTELLECT) - GetCreateStat(STAT_INTELLECT));
 
     //apply only the diff between the last and the new value.
     ApplyModUInt32Value(PLAYER_FIELD_MOD_HEALING_DONE_POS, spellPowerFromIntellect - _spellPowerFromIntellect, true);
@@ -252,7 +251,7 @@ float Player::GetHealthBonusFromStamina()
     float baseStam = stamina < 20 ? stamina : 20;
     float moreStam = stamina - baseStam;
 
-    return baseStam + (moreStam*14.0f);
+    return baseStam + (moreStam*10.0f);
 }
 
 float Player::GetManaBonusFromIntellect()
@@ -279,6 +278,13 @@ void Player::UpdateMaxHealth()
 
 void Player::UpdateMaxPower(Powers power)
 {
+    if (power > POWER_RUNIC_POWER)
+    {
+        // these powers don't currently have any modifiers
+        SetMaxPower(power, GetCreatePowers(power));
+        return;
+    }
+
     UnitMods unitMod = UnitMods(UNIT_MOD_POWER_START + power);
 
     float bonusPower = (power == POWER_MANA && GetCreatePowers(power) > 0) ? GetManaBonusFromIntellect() : 0;
@@ -314,7 +320,7 @@ void Player::UpdateAttackPowerAndDamage(bool ranged)
         switch (getClass())
         {
             case CLASS_HUNTER:
-                val2 = (level * 2.0f) + GetStat(STAT_AGILITY) - 10.0f;
+                val2 = level * 2.0f + GetStat(STAT_AGILITY) * 2.0f - 20.0f;
                 break;
             case CLASS_ROGUE:
                 val2 = level + GetStat(STAT_AGILITY) - 10.0f;
@@ -540,6 +546,7 @@ void Player::UpdateDamagePhysical(WeaponAttackType attType)
     }
 }
 
+// TODO: Make the Cata changes for these. As of 4.0.1 the system changed, check wowwiki.
 void Player::UpdateDefenseBonusesMod()
 {
     UpdateBlockPercentage();
@@ -754,6 +761,22 @@ void Player::UpdateArmorPenetration(int32 amount)
     SetUInt32Value(PLAYER_FIELD_COMBAT_RATING_1 + CR_ARMOR_PENETRATION, amount);
 }
 
+void Player::UpdateMasteryPercentage()
+{
+    // No mastery
+    float value = 0.0f;
+    if (CanMastery())
+    {
+        value = 0.0f;
+        // Mastery from SPELL_AURA_MASTERY aura
+        value += GetTotalAuraModifier(SPELL_AURA_MASTERY);
+        // Mastery from rating
+        value += GetRatingBonusValue(CR_MASTERY);
+        value = value < 0.0f ? 0.0f : value;
+    }
+    SetFloatValue(PLAYER_MASTERY, value);
+}
+
 void Player::UpdateMeleeHitChances()
 {
     m_modMeleeHitChance = (float)GetTotalAuraModifier(SPELL_AURA_MOD_HIT_CHANCE);
@@ -886,14 +909,14 @@ void Player::_RemoveAllStatBonuses()
     UpdateAllStats();
 }
 
-void Player::UpdateMastery()
+/*void Player::UpdateMastery()
 {
     if (HasAuraType(SPELL_AURA_MASTERY))
     {
         SetInt32Value(PLAYER_FIELD_COMBAT_RATING_1 + CR_MASTERY, _baseRatingValue[CR_MASTERY]);
         SetFloatValue(PLAYER_MASTERY, GetMasteryPoints());
     }
-}
+}*/
 
 /*#######################################
 ########                         ########
@@ -1210,7 +1233,7 @@ void Guardian::UpdateArmor()
     float bonus_armor = 0.0f;
     UnitMods unitMod = UNIT_MOD_ARMOR;
 
-    // hunter and warlock pets gain 35% of owner's armor value
+    // warlock pets gain 35% of owner's armor value, for hunter pets it depends on pet talent type.
     if (isPet())
     {
         float mod = 0.35f;
@@ -1425,8 +1448,8 @@ void Guardian::UpdateDamagePhysical(WeaponAttackType attType)
     float weapon_mindamage = GetWeaponDamageRange(BASE_ATTACK, MINDAMAGE);
     float weapon_maxdamage = GetWeaponDamageRange(BASE_ATTACK, MAXDAMAGE);
 
-    float mindamage = ((base_value + weapon_mindamage) * base_pct + total_value) * total_pct;
-    float maxdamage = ((base_value + weapon_maxdamage) * base_pct + total_value) * total_pct;
+    float mindamage = (((base_value + weapon_mindamage) * base_pct + total_value) * total_pct);
+    float maxdamage = (((base_value + weapon_maxdamage) * base_pct + total_value) * total_pct);
 
     //  Pet's base damage changes depending on happiness
     if (isHunterPet() && attType == BASE_ATTACK)

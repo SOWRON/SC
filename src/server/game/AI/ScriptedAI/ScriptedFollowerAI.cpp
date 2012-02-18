@@ -54,8 +54,8 @@ void FollowerAI::AttackStart(Unit* who)
         me->SetInCombatWith(who);
         who->SetInCombatWith(me);
 
-        if (me->HasUnitState(UNIT_STAT_FOLLOW))
-            me->ClearUnitState(UNIT_STAT_FOLLOW);
+        if (me->HasUnitState(UNIT_STATE_FOLLOW))
+            me->ClearUnitState(UNIT_STATE_FOLLOW);
 
         if (IsCombatMovementAllowed())
             me->GetMotionMaster()->MoveChase(who);
@@ -104,7 +104,7 @@ bool FollowerAI::AssistPlayerInCombat(Unit* who)
 
 void FollowerAI::MoveInLineOfSight(Unit* who)
 {
-    if (!me->HasUnitState(UNIT_STAT_STUNNED) && who->isTargetableForAttack() && who->isInAccessiblePlaceFor(me))
+    if (!me->HasUnitState(UNIT_STATE_STUNNED) && who->isTargetableForAttack() && who->isInAccessiblePlaceFor(me))
     {
         if (HasFollowState(STATE_FOLLOW_INPROGRESS) && AssistPlayerInCombat(who))
             return;
@@ -356,9 +356,9 @@ Player* FollowerAI::GetLeaderForFollower()
 
 void FollowerAI::SetFollowComplete(bool bWithEndEvent)
 {
-    if (me->HasUnitState(UNIT_STAT_FOLLOW))
+    if (me->HasUnitState(UNIT_STATE_FOLLOW))
     {
-        me->ClearUnitState(UNIT_STAT_FOLLOW);
+        me->ClearUnitState(UNIT_STATE_FOLLOW);
 
         me->StopMoving();
         me->GetMotionMaster()->Clear();
@@ -385,9 +385,9 @@ void FollowerAI::SetFollowPaused(bool paused)
     {
         AddFollowState(STATE_FOLLOW_PAUSED);
 
-        if (me->HasUnitState(UNIT_STAT_FOLLOW))
+        if (me->HasUnitState(UNIT_STATE_FOLLOW))
         {
-            me->ClearUnitState(UNIT_STAT_FOLLOW);
+            me->ClearUnitState(UNIT_STATE_FOLLOW);
 
             me->StopMoving();
             me->GetMotionMaster()->Clear();

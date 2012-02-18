@@ -92,7 +92,7 @@ const uint32 AddEntries[] =
 class boss_priestess_delrissa : public CreatureScript
 {
 public:
-    boss_priestess_delrissa() : CreatureScript("boss_priestess_delrissa") { }
+    boss_priestess_delrissa() : CreatureScript("boss_priestess_delrissa") {}
 
     CreatureAI* GetAI(Creature* creature) const
     {
@@ -254,7 +254,8 @@ public:
                     return;
                 }
                 ResetTimer = 5000;
-            } else ResetTimer -= diff;
+            } 
+            else ResetTimer -= diff;
 
             if (HealTimer <= diff)
             {
@@ -271,7 +272,8 @@ public:
 
                 DoCast(target, SPELL_FLASH_HEAL);
                 HealTimer = 15000;
-            } else HealTimer -= diff;
+            } 
+            else HealTimer -= diff;
 
             if (RenewTimer <= diff)
             {
@@ -284,7 +286,8 @@ public:
 
                 DoCast(target, SPELL_RENEW_NORMAL);
                 RenewTimer = 5000;
-            } else RenewTimer -= diff;
+            } 
+            else RenewTimer -= diff;
 
             if (ShieldTimer <= diff)
             {
@@ -297,7 +300,8 @@ public:
 
                 DoCast(target, SPELL_SHIELD);
                 ShieldTimer = 7500;
-            } else ShieldTimer -= diff;
+            } 
+            else ShieldTimer -= diff;
 
             if (DispelTimer <= diff)
             {
@@ -319,7 +323,8 @@ public:
                     DoCast(target, SPELL_DISPEL_MAGIC);
 
                 DispelTimer = 12000;
-            } else DispelTimer -= diff;
+            } 
+            else DispelTimer -= diff;
 
             if (SWPainTimer <= diff)
             {
@@ -327,7 +332,8 @@ public:
                     DoCast(target, SPELL_SW_PAIN_NORMAL);
 
                 SWPainTimer = 10000;
-            } else SWPainTimer -= diff;
+            } 
+            else SWPainTimer -= diff;
 
             DoMeleeAttackIfReady();
         }
@@ -469,7 +475,8 @@ struct boss_priestess_lackey_commonAI : public ScriptedAI
         {
             DoResetThreat();
             ResetThreatTimer = urand(5000, 20000);
-        } else ResetThreatTimer -= diff;
+        } 
+        else ResetThreatTimer -= diff;
     }
 };
 
@@ -486,7 +493,7 @@ enum eRogueSpells
 class boss_kagani_nightstrike : public CreatureScript
 {
 public:
-    boss_kagani_nightstrike() : CreatureScript("boss_kagani_nightstrike") { }
+    boss_kagani_nightstrike() : CreatureScript("boss_kagani_nightstrike") {}
 
     CreatureAI* GetAI(Creature* creature) const
     {
@@ -507,11 +514,11 @@ public:
 
         void Reset()
         {
-            Gouge_Timer = 5500;
-            Kick_Timer = 7000;
-            Vanish_Timer = 2000;
-            Eviscerate_Timer = 6000;
-            Wait_Timer = 5000;
+            Gouge_Timer       = 5500;
+            Kick_Timer        = 7000;
+            Vanish_Timer      = 2000;
+            Eviscerate_Timer  = 6000;
+            Wait_Timer        = 5000;
             InVanish = false;
             me->SetVisible(true);
 
@@ -536,10 +543,11 @@ public:
                 if (unit)
                     me->AddThreat(unit, 1000.0f);
 
-                InVanish = true;
-                Vanish_Timer = 30000;
-                Wait_Timer = 10000;
-            } else Vanish_Timer -= diff;
+                InVanish        = true;
+                Vanish_Timer    = 30000;
+                Wait_Timer      = 10000;
+            } 
+            else Vanish_Timer -= diff;
 
             if (InVanish)
             {
@@ -549,26 +557,30 @@ public:
                     DoCast(me->getVictim(), SPELL_KIDNEY_SHOT, true);
                     me->SetVisible(true);       // ...? Hacklike
                     InVanish = false;
-                } else Wait_Timer -= diff;
+                } 
+                else Wait_Timer -= diff;
             }
 
             if (Gouge_Timer <= diff)
             {
                 DoCast(me->getVictim(), SPELL_GOUGE);
                 Gouge_Timer = 5500;
-            } else Gouge_Timer -= diff;
+            } 
+            else Gouge_Timer -= diff;
 
             if (Kick_Timer <= diff)
             {
                 DoCast(me->getVictim(), SPELL_KICK);
                 Kick_Timer = 7000;
-            } else Kick_Timer -= diff;
+            } 
+            else Kick_Timer -= diff;
 
             if (Eviscerate_Timer <= diff)
             {
                 DoCast(me->getVictim(), SPELL_EVISCERATE);
                 Eviscerate_Timer = 4000;
-            } else Eviscerate_Timer -= diff;
+            } 
+            else Eviscerate_Timer -= diff;
 
             if (!InVanish)
                 DoMeleeAttackIfReady();
@@ -590,7 +602,7 @@ enum eWarlockSpells
 class boss_ellris_duskhallow : public CreatureScript
 {
 public:
-    boss_ellris_duskhallow() : CreatureScript("boss_ellris_duskhallow") { }
+    boss_ellris_duskhallow() : CreatureScript("boss_ellris_duskhallow") {}
 
     CreatureAI* GetAI(Creature* creature) const
     {
@@ -610,11 +622,11 @@ public:
 
         void Reset()
         {
-            Immolate_Timer = 6000;
-            Shadow_Bolt_Timer = 3000;
-            Seed_of_Corruption_Timer = 2000;
-            Curse_of_Agony_Timer = 1000;
-            Fear_Timer = 10000;
+            Immolate_Timer            = 6000;
+            Shadow_Bolt_Timer         = 3000;
+            Seed_of_Corruption_Timer  = 2000;
+            Curse_of_Agony_Timer      = 1000;
+            Fear_Timer                = 10000;
 
             boss_priestess_lackey_commonAI::Reset();
         }
@@ -635,13 +647,15 @@ public:
             {
                 DoCast(me->getVictim(), SPELL_IMMOLATE);
                 Immolate_Timer = 6000;
-            } else Immolate_Timer -= diff;
+            } 
+            else Immolate_Timer -= diff;
 
             if (Shadow_Bolt_Timer <= diff)
             {
                 DoCast(me->getVictim(), SPELL_SHADOW_BOLT);
                 Shadow_Bolt_Timer = 5000;
-            } else Shadow_Bolt_Timer -= diff;
+            } 
+            else Shadow_Bolt_Timer -= diff;
 
             if (Seed_of_Corruption_Timer <= diff)
             {
@@ -649,7 +663,8 @@ public:
                     DoCast(unit, SPELL_SEED_OF_CORRUPTION);
 
                 Seed_of_Corruption_Timer = 10000;
-            } else Seed_of_Corruption_Timer -= diff;
+            } 
+            else Seed_of_Corruption_Timer -= diff;
 
             if (Curse_of_Agony_Timer <= diff)
             {
@@ -657,7 +672,8 @@ public:
                     DoCast(unit, SPELL_CURSE_OF_AGONY);
 
                 Curse_of_Agony_Timer = 13000;
-            } else Curse_of_Agony_Timer -= diff;
+            } 
+            else Curse_of_Agony_Timer -= diff;
 
             if (Fear_Timer <= diff)
             {
@@ -665,7 +681,8 @@ public:
                     DoCast(unit, SPELL_FEAR);
 
                 Fear_Timer = 10000;
-            } else Fear_Timer -= diff;
+            } 
+            else Fear_Timer -= diff;
 
             DoMeleeAttackIfReady();
         }
@@ -681,7 +698,7 @@ enum eKickDown
 class boss_eramas_brightblaze : public CreatureScript
 {
 public:
-    boss_eramas_brightblaze() : CreatureScript("boss_eramas_brightblaze") { }
+    boss_eramas_brightblaze() : CreatureScript("boss_eramas_brightblaze") {}
 
     CreatureAI* GetAI(Creature* creature) const
     {
@@ -715,13 +732,15 @@ public:
             {
                 DoCast(me->getVictim(), SPELL_KNOCKDOWN);
                 Knockdown_Timer = 6000;
-            } else Knockdown_Timer -= diff;
+            } 
+            else Knockdown_Timer -= diff;
 
             if (Snap_Kick_Timer <= diff)
             {
                 DoCast(me->getVictim(), SPELL_SNAP_KICK);
                 Snap_Kick_Timer  = 4500;
-            } else Snap_Kick_Timer -= diff;
+            } 
+            else Snap_Kick_Timer -= diff;
 
             DoMeleeAttackIfReady();
         }
@@ -742,7 +761,7 @@ enum eMageSpells
 class boss_yazzai : public CreatureScript
 {
 public:
-    boss_yazzai() : CreatureScript("boss_yazzai") { }
+    boss_yazzai() : CreatureScript("boss_yazzai") {}
 
     CreatureAI* GetAI(Creature* creature) const
     {
@@ -769,14 +788,14 @@ public:
         {
             HasIceBlocked = false;
 
-            Polymorph_Timer = 1000;
-            Ice_Block_Timer = 20000;
-            Wait_Timer = 10000;
-            Blizzard_Timer = 8000;
-            Ice_Lance_Timer = 12000;
-            Cone_of_Cold_Timer = 10000;
-            Frostbolt_Timer = 3000;
-            Blink_Timer = 8000;
+            Polymorph_Timer        = 1000;
+            Ice_Block_Timer        = 20000;
+            Wait_Timer             = 10000;
+            Blizzard_Timer         = 8000;
+            Ice_Lance_Timer        = 12000;
+            Cone_of_Cold_Timer     = 10000;
+            Frostbolt_Timer        = 3000;
+            Blink_Timer            = 8000;
 
             boss_priestess_lackey_commonAI::Reset();
         }
@@ -795,7 +814,8 @@ public:
                     DoCast(target, SPELL_POLYMORPH);
                     Polymorph_Timer = 20000;
                 }
-            } else Polymorph_Timer -= diff;
+            } 
+            else Polymorph_Timer -= diff;
 
             if (HealthBelowPct(35) && !HasIceBlocked)
             {
@@ -809,25 +829,29 @@ public:
                     DoCast(unit, SPELL_BLIZZARD);
 
                 Blizzard_Timer = 8000;
-            } else Blizzard_Timer -= diff;
+            } 
+            else Blizzard_Timer -= diff;
 
             if (Ice_Lance_Timer <= diff)
             {
                 DoCast(me->getVictim(), SPELL_ICE_LANCE);
                 Ice_Lance_Timer = 12000;
-            } else Ice_Lance_Timer -= diff;
+            } 
+            else Ice_Lance_Timer -= diff;
 
             if (Cone_of_Cold_Timer <= diff)
             {
                 DoCast(me->getVictim(), SPELL_CONE_OF_COLD);
                 Cone_of_Cold_Timer = 10000;
-            } else Cone_of_Cold_Timer -= diff;
+            } 
+            else Cone_of_Cold_Timer -= diff;
 
             if (Frostbolt_Timer <= diff)
             {
                 DoCast(me->getVictim(), SPELL_FROSTBOLT);
                 Frostbolt_Timer = 8000;
-            } else Frostbolt_Timer -= diff;
+            } 
+            else Frostbolt_Timer -= diff;
 
             if (Blink_Timer <= diff)
             {
@@ -851,7 +875,8 @@ public:
                     DoCast(me, SPELL_BLINK);
 
                 Blink_Timer = 8000;
-            } else Blink_Timer -= diff;
+            } 
+            else Blink_Timer -= diff;
 
             DoMeleeAttackIfReady();
         }
@@ -872,7 +897,7 @@ enum eWarriorSpells
 class boss_warlord_salaris : public CreatureScript
 {
 public:
-    boss_warlord_salaris() : CreatureScript("boss_warlord_salaris") { }
+    boss_warlord_salaris() : CreatureScript("boss_warlord_salaris") {}
 
     CreatureAI* GetAI(Creature* creature) const
     {
@@ -893,12 +918,12 @@ public:
 
         void Reset()
         {
-            Intercept_Stun_Timer = 500;
-            Disarm_Timer = 6000;
-            Piercing_Howl_Timer = 10000;
-            Frightening_Shout_Timer = 18000;
-            Hamstring_Timer = 4500;
-            Mortal_Strike_Timer = 8000;
+            Intercept_Stun_Timer      = 500;
+            Disarm_Timer              = 6000;
+            Piercing_Howl_Timer       = 10000;
+            Frightening_Shout_Timer   = 18000;
+            Hamstring_Timer           = 4500;
+            Mortal_Strike_Timer       = 8000;
 
             boss_priestess_lackey_commonAI::Reset();
         }
@@ -940,37 +965,43 @@ public:
                 }
 
                 Intercept_Stun_Timer = 10000;
-            } else Intercept_Stun_Timer -= diff;
+            } 
+            else Intercept_Stun_Timer -= diff;
 
             if (Disarm_Timer <= diff)
             {
                 DoCast(me->getVictim(), SPELL_DISARM);
                 Disarm_Timer = 6000;
-            } else Disarm_Timer -= diff;
+            } 
+            else Disarm_Timer -= diff;
 
             if (Hamstring_Timer <= diff)
             {
                 DoCast(me->getVictim(), SPELL_HAMSTRING);
                 Hamstring_Timer = 4500;
-            } else Hamstring_Timer -= diff;
+            } 
+            else Hamstring_Timer -= diff;
 
             if (Mortal_Strike_Timer <= diff)
             {
                 DoCast(me->getVictim(), SPELL_MORTAL_STRIKE);
                 Mortal_Strike_Timer = 4500;
-            } else Mortal_Strike_Timer -= diff;
+            } 
+            else Mortal_Strike_Timer -= diff;
 
             if (Piercing_Howl_Timer <= diff)
             {
                 DoCast(me->getVictim(), SPELL_PIERCING_HOWL);
                 Piercing_Howl_Timer = 10000;
-            } else Piercing_Howl_Timer -= diff;
+            } 
+            else Piercing_Howl_Timer -= diff;
 
             if (Frightening_Shout_Timer <= diff)
             {
                 DoCast(me->getVictim(), SPELL_FRIGHTENING_SHOUT);
                 Frightening_Shout_Timer = 18000;
-            } else Frightening_Shout_Timer -= diff;
+            } 
+            else Frightening_Shout_Timer -= diff;
 
             DoMeleeAttackIfReady();
         }
@@ -992,7 +1023,7 @@ enum eHunterSpells
 class boss_garaxxas : public CreatureScript
 {
 public:
-    boss_garaxxas() : CreatureScript("boss_garaxxas") { }
+    boss_garaxxas() : CreatureScript("boss_garaxxas") {}
 
     CreatureAI* GetAI(Creature* creature) const
     {
@@ -1015,12 +1046,12 @@ public:
 
         void Reset()
         {
-            Aimed_Shot_Timer = 6000;
-            Shoot_Timer = 2500;
-            Concussive_Shot_Timer = 8000;
-            Multi_Shot_Timer = 10000;
-            Wing_Clip_Timer = 4000;
-            Freezing_Trap_Timer = 15000;
+            Aimed_Shot_Timer         = 6000;
+            Shoot_Timer              = 2500;
+            Concussive_Shot_Timer    = 8000;
+            Multi_Shot_Timer         = 10000;
+            Wing_Clip_Timer          = 4000;
+            Freezing_Trap_Timer      = 15000;
 
             Unit* pet = Unit::GetUnit(*me, PetGUID);
             if (!pet)
@@ -1047,7 +1078,8 @@ public:
                 {
                     DoCast(me->getVictim(), SPELL_WING_CLIP);
                     Wing_Clip_Timer = 4000;
-                } else Wing_Clip_Timer -= diff;
+                } 
+                else Wing_Clip_Timer -= diff;
 
                 if (Freezing_Trap_Timer <= diff)
                 {
@@ -1063,7 +1095,8 @@ public:
                         DoCast(me->getVictim(), SPELL_FREEZING_TRAP);
                         Freezing_Trap_Timer = 15000;
                     }
-                } else Freezing_Trap_Timer -= diff;
+                } 
+                else Freezing_Trap_Timer -= diff;
 
                 DoMeleeAttackIfReady();
             }
@@ -1073,25 +1106,29 @@ public:
                 {
                     DoCast(me->getVictim(), SPELL_CONCUSSIVE_SHOT);
                     Concussive_Shot_Timer = 8000;
-                } else Concussive_Shot_Timer -= diff;
+                } 
+                else Concussive_Shot_Timer -= diff;
 
                 if (Multi_Shot_Timer <= diff)
                 {
                     DoCast(me->getVictim(), SPELL_MULTI_SHOT);
                     Multi_Shot_Timer = 10000;
-                } else Multi_Shot_Timer -= diff;
+                } 
+                else Multi_Shot_Timer -= diff;
 
                 if (Aimed_Shot_Timer <= diff)
                 {
                     DoCast(me->getVictim(), SPELL_AIMED_SHOT);
                     Aimed_Shot_Timer = 6000;
-                } else Aimed_Shot_Timer -= diff;
+                } 
+                else Aimed_Shot_Timer -= diff;
 
                 if (Shoot_Timer <= diff)
                 {
                     DoCast(me->getVictim(), SPELL_SHOOT);
                     Shoot_Timer = 2500;
-                } else Shoot_Timer -= diff;
+                } 
+                else Shoot_Timer -= diff;
             }
         }
     };
@@ -1111,7 +1148,7 @@ enum Spells
 class boss_apoko : public CreatureScript
 {
 public:
-    boss_apoko() : CreatureScript("boss_apoko") { }
+    boss_apoko() : CreatureScript("boss_apoko") {}
 
     CreatureAI* GetAI(Creature* creature) const
     {
@@ -1154,13 +1191,15 @@ public:
                 DoCast(me, RAND(SPELL_WINDFURY_TOTEM, SPELL_FIRE_NOVA_TOTEM, SPELL_EARTHBIND_TOTEM));
                 ++Tote_Amount;
                 Totem_Timer = Tote_Amount*2000;
-            } else Totem_Timer -= diff;
+            } 
+            else Totem_Timer -= diff;
 
             if (War_Stomp_Timer <= diff)
             {
                 DoCast(me, SPELL_WAR_STOMP);
                 War_Stomp_Timer = 10000;
-            } else War_Stomp_Timer -= diff;
+            } 
+            else War_Stomp_Timer -= diff;
 
             if (Purge_Timer <= diff)
             {
@@ -1168,13 +1207,15 @@ public:
                     DoCast(unit, SPELL_PURGE);
 
                 Purge_Timer = 15000;
-            } else Purge_Timer -= diff;
+            } 
+            else Purge_Timer -= diff;
 
             if (Frost_Shock_Timer <= diff)
             {
                 DoCast(me->getVictim(), SPELL_FROST_SHOCK);
                 Frost_Shock_Timer = 7000;
-            } else Frost_Shock_Timer -= diff;
+            } 
+            else Frost_Shock_Timer -= diff;
 
             if (Healing_Wave_Timer <= diff)
             {
@@ -1189,7 +1230,8 @@ public:
                 Healing_Wave_Timer = 5000;
                 //    }
                 // }
-            } else Healing_Wave_Timer -= diff;
+            } 
+            else Healing_Wave_Timer -= diff;
 
             DoMeleeAttackIfReady();
         }
@@ -1209,7 +1251,7 @@ enum eEngineerSpells
 class boss_zelfan : public CreatureScript
 {
 public:
-    boss_zelfan() : CreatureScript("boss_zelfan") { }
+    boss_zelfan() : CreatureScript("boss_zelfan") {}
 
     CreatureAI* GetAI(Creature* creature) const
     {
@@ -1229,11 +1271,11 @@ public:
 
         void Reset()
         {
-            Goblin_Dragon_Gun_Timer = 20000;
-            Rocket_Launch_Timer = 7000;
-            Recombobulate_Timer = 4000;
-            High_Explosive_Sheep_Timer = 10000;
-            Fel_Iron_Bomb_Timer = 15000;
+            Goblin_Dragon_Gun_Timer     = 20000;
+            Rocket_Launch_Timer         = 7000;
+            Recombobulate_Timer         = 4000;
+            High_Explosive_Sheep_Timer  = 10000;
+            Fel_Iron_Bomb_Timer         = 15000;
 
             boss_priestess_lackey_commonAI::Reset();
         }
@@ -1277,13 +1319,15 @@ public:
                     }
                 }
                 Recombobulate_Timer = 2000;
-            } else Recombobulate_Timer -= diff;
+            } 
+            else Recombobulate_Timer -= diff;
 
             if (High_Explosive_Sheep_Timer <= diff)
             {
                 DoCast(me, SPELL_HIGH_EXPLOSIVE_SHEEP);
                 High_Explosive_Sheep_Timer = 65000;
-            } else High_Explosive_Sheep_Timer -= diff;
+            } 
+            else High_Explosive_Sheep_Timer -= diff;
 
             DoMeleeAttackIfReady();
         }
@@ -1294,7 +1338,7 @@ public:
 class mob_high_explosive_sheep : public CreatureScript
 {
 public:
-    mob_high_explosive_sheep() : CreatureScript("mob_high_explosive_sheep") { }
+    mob_high_explosive_sheep() : CreatureScript("mob_high_explosive_sheep") {}
 
     //CreatureAI* GetAI(Creature* creature) const
     //{

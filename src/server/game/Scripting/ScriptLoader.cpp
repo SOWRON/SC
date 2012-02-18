@@ -45,6 +45,7 @@ void AddSC_mastery_spells();
 void AddSC_quest_spell_scripts();
 void AddSC_item_spell_scripts();
 void AddSC_example_spell_scripts();
+void AddSC_holiday_spell_scripts();
 
 void AddSC_SmartSCripts();
 
@@ -84,6 +85,8 @@ void AddSC_npc_taxi();
 void AddSC_achievement_scripts();
 
 //eastern kingdoms
+void AddSC_elwynn_forest();
+
 void AddSC_alterac_valley();                 //Alterac Valley
 void AddSC_boss_balinda();
 void AddSC_boss_drekthar();
@@ -91,7 +94,6 @@ void AddSC_boss_galvangar();
 void AddSC_boss_vanndar();
 void AddSC_instance_baradin_hold();          //Baradin Hold
 void AddSC_boss_argaloth();
-void AddSC_boss_occuthar();
 void AddSC_instance_bastion_of_twilight();   //BastionOfTwilight
 void AddSC_boss_theralion_and_valiona();
 void AddSC_boss_sinestra();
@@ -294,6 +296,7 @@ void AddSC_eversong_woods();
 void AddSC_ghostlands();
 void AddSC_gilneas();
 void AddSC_gilneas_phase1();
+void AddSC_gilneas_phase2();
 void AddSC_hinterlands();
 void AddSC_ironforge();
 void AddSC_isle_of_queldanas();
@@ -305,7 +308,7 @@ void AddSC_silverpine_forest();
 void AddSC_stormwind_city();
 void AddSC_stranglethorn_vale();
 void AddSC_swamp_of_sorrows();
-void AddSC_tirisfal_glades();
+//void AddSC_tirisfal_glades();
 void AddSC_undercity();
 void AddSC_western_plaguelands();
 void AddSC_westfall();
@@ -726,6 +729,7 @@ void AddSpellScripts()
     AddSC_mastery_spells();
     AddSC_quest_spell_scripts();
     AddSC_item_spell_scripts();
+    AddSC_holiday_spell_scripts();    
 }
 
 void AddCommandScripts()
@@ -772,6 +776,7 @@ void AddWorldScripts()
 void AddEasternKingdomsScripts()
 {
 #ifdef SCRIPTS
+	AddSC_elwynn_forest();
     AddSC_alterac_valley();                 //Alterac Valley
     AddSC_boss_balinda();
     AddSC_boss_drekthar();
@@ -779,7 +784,6 @@ void AddEasternKingdomsScripts()
     AddSC_boss_vanndar();
     AddSC_instance_baradin_hold();          //Baradin Hold
     AddSC_boss_argaloth();
-    AddSC_boss_occuthar();
     AddSC_instance_bastion_of_twilight();   //BastionOfTwilight
     AddSC_boss_theralion_and_valiona();
     AddSC_boss_sinestra();
@@ -982,6 +986,7 @@ void AddEasternKingdomsScripts()
     AddSC_ghostlands();
     AddSC_gilneas();
     AddSC_gilneas_phase1();
+    AddSC_gilneas_phase2();
     AddSC_hinterlands();
     AddSC_ironforge();
     AddSC_isle_of_queldanas();
@@ -993,7 +998,7 @@ void AddEasternKingdomsScripts()
     AddSC_stormwind_city();
     AddSC_stranglethorn_vale();
     AddSC_swamp_of_sorrows();
-    AddSC_tirisfal_glades();
+    //AddSC_tirisfal_glades();
     AddSC_undercity();
     AddSC_western_plaguelands();
     AddSC_westfall();

@@ -375,7 +375,7 @@ bool ChatHandler::HandleGMTicketEscalateCommand(const char *args)
 
     uint32 ticketId = atoi(args);
     GmTicket* ticket = sTicketMgr->GetTicket(ticketId);
-    if (!ticket || !ticket->IsClosed() || ticket->IsCompleted() || ticket->GetEscalatedStatus() != TICKET_UNASSIGNED)
+    if (!ticket || ticket->IsClosed() || ticket->IsCompleted() || ticket->GetEscalatedStatus() != TICKET_UNASSIGNED)
     {
         SendSysMessage(LANG_COMMAND_TICKETNOTEXIST);
         return true;
@@ -398,7 +398,7 @@ bool ChatHandler::HandleGMTicketCompleteCommand(const char* args)
 
     uint32 ticketId = atoi(args);
     GmTicket* ticket = sTicketMgr->GetTicket(ticketId);
-    if (!ticket || !ticket->IsClosed() || ticket->IsCompleted())
+    if (!ticket || ticket->IsClosed() || ticket->IsCompleted())
     {
         SendSysMessage(LANG_COMMAND_TICKETNOTEXIST);
         return true;
@@ -425,7 +425,7 @@ inline bool ChatHandler::_HandleGMTicketResponseAppendCommand(const char* args, 
         return false;
 
     GmTicket* ticket = sTicketMgr->GetTicket(ticketId);
-    if (!ticket || !ticket->IsClosed())
+    if (!ticket || ticket->IsClosed())
     {
         PSendSysMessage(LANG_COMMAND_TICKETNOTEXIST);
         return true;

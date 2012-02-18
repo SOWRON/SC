@@ -91,7 +91,7 @@ struct boss_twinemperorsAI : public ScriptedAI
         AfterTeleportTimer = 0;
         Abuse_Bug_Timer = urand(10000, 17000);
         BugsTimer = 2000;
-        me->ClearUnitState(UNIT_STAT_STUNNED);
+        me->ClearUnitState(UNIT_STATE_STUNNED);
         DontYellWhenDead = false;
         EnrageTimer = 15*60000;
     }
@@ -235,7 +235,7 @@ struct boss_twinemperorsAI : public ScriptedAI
         DoStopAttack();
         DoResetThreat();
         DoCast(me, SPELL_TWIN_TELEPORT_VISUAL);
-        me->AddUnitState(UNIT_STAT_STUNNED);
+        me->AddUnitState(UNIT_STATE_STUNNED);
         AfterTeleport = true;
         AfterTeleportTimer = 2000;
         tspellcasted = false;
@@ -247,9 +247,9 @@ struct boss_twinemperorsAI : public ScriptedAI
         {
             if (!tspellcasted)
             {
-                me->ClearUnitState(UNIT_STAT_STUNNED);
+                me->ClearUnitState(UNIT_STATE_STUNNED);
                 DoCast(me, SPELL_TWIN_TELEPORT);
-                me->AddUnitState(UNIT_STAT_STUNNED);
+                me->AddUnitState(UNIT_STATE_STUNNED);
             }
 
             tspellcasted = true;
@@ -257,7 +257,7 @@ struct boss_twinemperorsAI : public ScriptedAI
             if (AfterTeleportTimer <= diff)
             {
                 AfterTeleport = false;
-                me->ClearUnitState(UNIT_STAT_STUNNED);
+                me->ClearUnitState(UNIT_STATE_STUNNED);
                 if (Unit* nearu = me->SelectNearestTarget(100))
                 {
                     //DoYell(nearu->GetName(), LANG_UNIVERSAL, 0);
