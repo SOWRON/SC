@@ -166,7 +166,7 @@ public:
                         DoCast(target, SPELL_CHAIN_LIGHTNING);
 
                     ChainLightningTimer = 8000;
-                } 
+                }
                 else ChainLightningTimer -= diff;
 
                 if (ArcaneShockTimer <= diff)
@@ -176,7 +176,7 @@ public:
                         DoCast(target, SPELL_ARCANE_SHOCK);
 
                     ArcaneShockTimer = 8000;
-                } 
+                }
                 else ArcaneShockTimer -= diff;
             }
             else
@@ -186,10 +186,10 @@ public:
                     DoCast(me->getVictim(), SPELL_OVERLOAD);
 
                     OverloadTimer = 2000;
-                } 
+                }
                 else OverloadTimer -= diff;
             }
-            
+
             DoMeleeAttackIfReady();
         }
     };

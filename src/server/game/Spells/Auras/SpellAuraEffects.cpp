@@ -1450,7 +1450,6 @@ void AuraEffect::HandleShapeshiftBoosts(Unit* target, bool apply) const
         case FORM_GHOUL:
         case FORM_AMBIENT:
         case FORM_STEALTH:
-
         case FORM_CREATURECAT:
         case FORM_CREATUREBEAR:
             break;
