@@ -1,4 +1,7 @@
-# Copyright (C) 2008-2012 TrinityCore <http://www.trinitycore.org/>
+# Copyright (C) 2011-2012 ArkCORE2 <http://www.arkania.net/>
+# Copyright (C) 2010-2012 Project SkyFire <http://www.projectskyfire.org/> 
+# Copyright (C) 2006-2012 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
+#
 #
 # This file is free software; as a special exception the author gives
 # unlimited permission to copy and/or distribute it, with or without
@@ -20,6 +23,7 @@ set(scripts_STAT_SRCS
   World/mob_generic_creature.cpp
   World/npc_innkeeper.cpp
   World/npc_professions.cpp
+  World/npc_multi_professions.cpp
   World/npc_taxi.cpp
   World/npcs_special.cpp
 )
