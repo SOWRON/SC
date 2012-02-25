@@ -1,12 +1,14 @@
 /*
+ *
  * Copyright (C) 2011-2012 ArkCORE2 <http://www.arkania.net/>
  * Copyright (C) 2010-2012 Project SkyFire <http://www.projectskyfire.org/> 
+ *
  * Copyright (C) 2008-2012 TrinityCore <http://www.trinitycore.org/>
  * Copyright (C) 2005-2012 MaNGOS <http://getmangos.com/>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
- * Free Software Foundation; either version 2 of the License, or (at your
+ * Free Software Foundation; either version 3 of the License, or (at your
  * option) any later version.
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT
@@ -315,12 +317,8 @@ void npc_escortAI::MovementInform(uint32 moveType, uint32 pointId)
     if (pointId == POINT_LAST_POINT)
     {
         sLog->outDebug(LOG_FILTER_TSCR, "TSCR: EscortAI has returned to original position before combat");
-
-        if (m_bIsRunning && me->HasUnitMovementFlag(MOVEMENTFLAG_WALKING))
-            me->RemoveUnitMovementFlag(MOVEMENTFLAG_WALKING);
-        else if (!m_bIsRunning && !me->HasUnitMovementFlag(MOVEMENTFLAG_WALKING))
-            me->AddUnitMovementFlag(MOVEMENTFLAG_WALKING);
-
+        
+        me->SetWalk(!m_bIsRunning);
         RemoveEscortState(STATE_ESCORT_RETURNING);
 
         if (!m_uiWPWaitTimer)
@@ -409,14 +407,14 @@ void npc_escortAI::SetRun(bool on)
     if (on)
     {
         if (!m_bIsRunning)
-            me->RemoveUnitMovementFlag(MOVEMENTFLAG_WALKING);
+            me->SetWalk(false);
         else
             sLog->outDebug(LOG_FILTER_TSCR, "TSCR: EscortAI attempt to set run mode, but is already running.");
     }
     else
     {
         if (m_bIsRunning)
-            me->AddUnitMovementFlag(MOVEMENTFLAG_WALKING);
+            me->SetWalk(true);
         else
             sLog->outDebug(LOG_FILTER_TSCR, "TSCR: EscortAI attempt to set walk mode, but is already walking.");
     }
@@ -482,9 +480,9 @@ void npc_escortAI::Start(bool isActiveAttacker /* = true*/, bool run /* = false 
 
     //Set initial speed
     if (m_bIsRunning)
-        me->RemoveUnitMovementFlag(MOVEMENTFLAG_WALKING);
+        me->SetWalk(false);
     else
-        me->AddUnitMovementFlag(MOVEMENTFLAG_WALKING);
+        me->SetWalk(true);
 
     AddEscortState(STATE_ESCORT_ESCORTING);
 }

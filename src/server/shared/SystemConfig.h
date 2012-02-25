@@ -1,11 +1,14 @@
 /*
+ *
  * Copyright (C) 2011-2012 ArkCORE2 <http://www.arkania.net/>
  * Copyright (C) 2010-2012 Project SkyFire <http://www.projectskyfire.org/> 
+ * Copyright (C) 2008-2012 TrinityCore <http://www.trinitycore.org/>
+ *
  * Copyright (C) 2005-2012 MaNGOS <http://getmangos.com/>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
- * Free Software Foundation; either version 2 of the License, or (at your
+ * Free Software Foundation; either version 3 of the License, or (at your
  * option) any later version.
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT
@@ -16,8 +19,6 @@
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-
-// THIS FILE IS DEPRECATED
 
 #ifndef TRINITY_SYSTEMCONFIG_H
 #define TRINITY_SYSTEMCONFIG_H
@@ -34,6 +35,8 @@
 #endif
 
 #define _CLIENT_BUILD_REVISION "4.0.6a - 13623"
+
+#define _CLIENT_BUILD_REVISION_2 "4.0.6a - 13623 (c)ProjectSkyFire <http://www.projectskyfire.org>"  // DO NOT REMOVE OR ALTER OUR COPYRIGHTS!
 
 #if PLATFORM == PLATFORM_WINDOWS
 # ifdef _WIN64
