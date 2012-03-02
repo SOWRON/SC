@@ -201,30 +201,8 @@ LanguageDesc const* GetLanguageDescByID(uint32 lang)
 bool SpellClickInfo::IsFitToRequirements(Unit const* clicker, Unit const* clickee) const
 {
     Player const* playerClicker = clicker->ToPlayer();
-    if (playerClicker)
-    {
-        if (questStart)
-        {
-            // not in expected required quest state
-            if ((!questStartCanActive || !playerClicker->IsActiveQuest(questStart)) && !playerClicker->GetQuestRewardStatus(questStart))
-                return false;
-        }
-
-        if (questEnd)
-        {
-            // not in expected forbidden quest state
-            if (playerClicker->GetQuestRewardStatus(questEnd))
-                return false;
-        }
-    }
-
-    if (auraRequired)
-        if (!clicker->HasAura(auraRequired))
-            return false;
-
-    if (auraForbidden)
-        if (clicker->HasAura(auraForbidden))
-            return false;
+    if (!playerClicker)
+        return true;
 
     Unit const* summoner = NULL;
     // Check summoners for party
@@ -232,9 +210,6 @@ bool SpellClickInfo::IsFitToRequirements(Unit const* clicker, Unit const* clicke
         summoner = clickee->ToTempSummon()->GetSummoner();
     if (!summoner)
         summoner = clickee;
-
-    if (!playerClicker)
-        return true;
 
     // This only applies to players
     switch (userType)
@@ -458,14 +433,10 @@ void ObjectMgr::LoadCreatureTemplates()
         creatureTemplate.Entry = entry;
 
         for (uint8 i = 0; i < MAX_DIFFICULTY - 1; ++i)
-        {
             creatureTemplate.DifficultyEntry[i] = fields[1 + i].GetUInt32();
-        }
 
         for (uint8 i = 0; i < MAX_KILL_CREDIT; ++i)
-        {
             creatureTemplate.KillCredit[i] = fields[4 + i].GetUInt32();
-        }
 
         creatureTemplate.Modelid1          = fields[6].GetUInt32();
         creatureTemplate.Modelid2          = fields[7].GetUInt32();
@@ -510,14 +481,10 @@ void ObjectMgr::LoadCreatureTemplates()
         creatureTemplate.SkinLootId        = fields[46].GetUInt32();
 
         for (uint8 i = SPELL_SCHOOL_HOLY; i < MAX_SPELL_SCHOOL; ++i)
-        {
             creatureTemplate.resistance[i] = fields[47 + i -1].GetInt32();
-        }
 
         for (uint8 i = 0; i < CREATURE_MAX_SPELLS; ++i)
-        {
             creatureTemplate.spells[i] = fields[53 + i].GetUInt32();
-        }
 
         creatureTemplate.PetSpellDataId = fields[61].GetUInt32();
         creatureTemplate.VehicleId      = fields[62].GetUInt32();
@@ -532,9 +499,7 @@ void ObjectMgr::LoadCreatureTemplates()
         creatureTemplate.RacialLeader   = fields[71].GetBool();
 
         for (uint8 i = 0; i < MAX_CREATURE_QUEST_ITEMS; ++i)
-        {
             creatureTemplate.questItems[i] = fields[72 + i].GetUInt32();
-        }
 
         creatureTemplate.movementId         = fields[78].GetUInt32();
         creatureTemplate.RegenHealth        = fields[79].GetBool();
@@ -549,9 +514,7 @@ void ObjectMgr::LoadCreatureTemplates()
 
     // Checking needs to be done after loading because of the difficulty self referencing
     for (CreatureTemplateContainer::const_iterator itr = CreatureTemplateStore.begin(); itr != CreatureTemplateStore.end(); ++itr)
-    {
         CheckCreatureTemplate(&itr->second);
-    }
 
     sLog->outString(">> Loaded %u creature definitions in %u ms", count, GetMSTimeDiffToNow(oldMSTime));
     sLog->outString();
@@ -946,7 +909,8 @@ void ObjectMgr::LoadCreatureAddons()
 
         uint32 guid = fields[0].GetUInt32();
 
-        if (mCreatureDataMap.find(guid) == mCreatureDataMap.end())
+        CreatureData const* creData = GetCreatureData(guid);
+        if (!creData)
         {
             sLog->outErrorDb("Creature (GUID: %u) does not exist but has a record in `creature_addon`", guid);
             continue;
@@ -955,6 +919,12 @@ void ObjectMgr::LoadCreatureAddons()
         CreatureAddon& creatureAddon = CreatureAddonStore[guid];
 
         creatureAddon.path_id = fields[1].GetUInt32();
+        if (creData->movementType == WAYPOINT_MOTION_TYPE && !creatureAddon.path_id)
+        {
+            const_cast<CreatureData*>(creData)->movementType = IDLE_MOTION_TYPE;
+            sLog->outErrorDb("Creature (GUID %u) has movement type set to WAYPOINT_MOTION_TYPE but no path assigned", guid);
+        }
+
         creatureAddon.mount   = fields[2].GetUInt32();
         creatureAddon.bytes1  = fields[3].GetUInt32();
         creatureAddon.bytes2  = fields[4].GetUInt32();
@@ -1456,15 +1426,6 @@ void ObjectMgr::LoadCreatures()
         return;
     }
 
-    // Build single time for check creature data
-    std::set<uint32> difficultyCreatures[MAX_DIFFICULTY - 1];
-
-    CreatureTemplateContainer const* ctc = sObjectMgr->GetCreatureTemplates();
-    for (CreatureTemplateContainer::const_iterator itr = ctc->begin(); itr != ctc->end(); ++itr)
-            for (uint32 diff = 0; diff < MAX_DIFFICULTY - 1; ++diff)
-                if (itr->second.DifficultyEntry[diff])
-                    difficultyCreatures[diff].insert(itr->second.DifficultyEntry[diff]);
-
     // Build single time for check spawnmask
     std::map<uint32, uint32> spawnMasks;
     for (uint32 i = 0; i < sMapStore.GetNumRows(); ++i)
@@ -1525,7 +1486,7 @@ void ObjectMgr::LoadCreatures()
         bool ok = true;
         for (uint32 diff = 0; diff < MAX_DIFFICULTY - 1 && ok; ++diff)
         {
-            if (difficultyCreatures[diff].find(data.id) != difficultyCreatures[diff].end())
+            if (difficultyEntries[diff].find(data.id) != difficultyEntries[diff].end())
             {
                 sLog->outErrorDb("Table `creature` have creature (GUID: %u) that listed as difficulty %u template (entry: %u) in `creature_template`, skipped.",
                     guid, diff + 1, data.id);
@@ -7225,8 +7186,8 @@ void ObjectMgr::LoadNPCSpellClickSpells()
     uint32 oldMSTime = getMSTime();
 
     mSpellClickInfoMap.clear();
-    //                                                0          1         2            3                   4          5           6              7               8
-    QueryResult result = WorldDatabase.Query("SELECT npc_entry, spell_id, quest_start, quest_start_active, quest_end, cast_flags, aura_required, aura_forbidden, user_type FROM npc_spellclick_spells");
+    //                                                0          1         2            3 
+    QueryResult result = WorldDatabase.Query("SELECT npc_entry, spell_id, cast_flags, user_type FROM npc_spellclick_spells");
 
     if (!result)
     {
@@ -7257,66 +7218,14 @@ void ObjectMgr::LoadNPCSpellClickSpells()
             continue;
         }
 
-        uint32 auraRequired = fields[6].GetUInt32();
-        if (auraRequired)
-        {
-            SpellInfo const *aurReqInfo = sSpellMgr->GetSpellInfo(auraRequired);
-            if (!aurReqInfo)
-            {
-                sLog->outErrorDb("Table npc_spellclick_spells references unknown aura required %u. Skipping entry.", auraRequired);
-                continue;
-            }
-        }
-
-        uint32 auraForbidden = fields[7].GetUInt32();
-        if (auraForbidden)
-        {
-            SpellInfo const *aurForInfo = sSpellMgr->GetSpellInfo(auraForbidden);
-            if (!aurForInfo)
-            {
-                sLog->outErrorDb("Table npc_spellclick_spells references unknown aura forbidden %u. Skipping entry.", auraForbidden);
-                continue;
-            }
-        }
-
-        uint32 quest_start = fields[2].GetUInt32();
-
-        // quest might be 0 to enable spellclick independent of any quest
-        if (quest_start)
-        {
-            if (mQuestTemplates.find(quest_start) == mQuestTemplates.end())
-            {
-                sLog->outErrorDb("Table npc_spellclick_spells references unknown start quest %u. Skipping entry.", quest_start);
-                continue;
-            }
-        }
-
-        bool quest_start_active = fields[3].GetBool();
-
-        uint32 quest_end = fields[4].GetUInt32();
-        // quest might be 0 to enable spellclick active infinity after start quest
-        if (quest_end)
-        {
-            if (mQuestTemplates.find(quest_end) == mQuestTemplates.end())
-            {
-                sLog->outErrorDb("Table npc_spellclick_spells references unknown end quest %u. Skipping entry.", quest_end);
-                continue;
-            }
-        }
-
-        uint8 userType = fields[8].GetUInt8();
+        uint8 userType = fields[3].GetUInt8();
         if (userType >= SPELL_CLICK_USER_MAX)
             sLog->outErrorDb("Table npc_spellclick_spells references unknown user type %u. Skipping entry.", uint32(userType));
 
-        uint8 castFlags = fields[5].GetUInt8();
+        uint8 castFlags = fields[2].GetUInt8();
         SpellClickInfo info;
         info.spellId = spellid;
-        info.questStart = quest_start;
-        info.questStartCanActive = quest_start_active;
-        info.questEnd = quest_end;
         info.castFlags = castFlags;
-        info.auraRequired = auraRequired;
-        info.auraForbidden = auraForbidden;
         info.userType = SpellClickUserTypes(userType);
         mSpellClickInfoMap.insert(SpellClickInfoMap::value_type(npc_entry, info));
 

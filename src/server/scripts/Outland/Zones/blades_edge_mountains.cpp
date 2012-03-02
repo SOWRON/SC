@@ -517,7 +517,7 @@ public:
                 me->GetMotionMaster()->MoveTargetedHome();
                 Creature* Credit = me->FindNearestCreature(NPC_QUEST_CREDIT, 50, true);
                 if (player && Credit)
-                    player->KilledMonster(Credit->GetCreatureInfo(), Credit->GetGUID());
+                    player->KilledMonster(Credit->GetCreatureTemplate(), Credit->GetGUID());
             }
         }
 

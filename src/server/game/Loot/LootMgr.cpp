@@ -106,9 +106,7 @@ uint32 LootStore::LoadLootTable()
     QueryResult result = WorldDatabase.PQuery("SELECT entry, item, ChanceOrQuestChance, lootmode, groupid, mincountOrRef, maxcount FROM %s", GetName());
 
     if (!result)
-    {
         return 0;
-}
 
     uint32 count = 0;
 
@@ -343,7 +341,7 @@ LootItem::LootItem(LootStoreItem const& li)
 bool LootItem::AllowedForPlayer(Player const* player) const
 {
     // DB conditions check
-    if (!sConditionMgr->IsPlayerMeetToConditions(const_cast<Player*>(player), conditions))
+    if (!sConditionMgr->IsObjectMeetToConditions(const_cast<Player*>(player), conditions))
         return false;
 
     ItemTemplate const* proto = sObjectMgr->GetItemTemplate(itemid);
@@ -1379,7 +1377,7 @@ bool LootTemplate::addConditionItem(Condition* cond)
     {
         for (LootStoreItemList::iterator i = Entries.begin(); i != Entries.end(); ++i)
         {
-            if (i->itemid == cond->mSourceEntry)
+            if (i->itemid == cond->SourceEntry)
             {
                 i->conditions.push_back(cond);
                 return true;
@@ -1395,7 +1393,7 @@ bool LootTemplate::addConditionItem(Condition* cond)
             {
                 for (LootStoreItemList::iterator i = itemList->begin(); i != itemList->end(); ++i)
                 {
-                    if ((*i).itemid == cond->mSourceEntry)
+                    if ((*i).itemid == cond->SourceEntry)
                     {
                         (*i).conditions.push_back(cond);
                         return true;
@@ -1407,7 +1405,7 @@ bool LootTemplate::addConditionItem(Condition* cond)
             {
                 for (LootStoreItemList::iterator i = itemList->begin(); i != itemList->end(); ++i)
                 {
-                    if ((*i).itemid == cond->mSourceEntry)
+                    if ((*i).itemid == cond->SourceEntry)
                     {
                         (*i).conditions.push_back(cond);
                         return true;

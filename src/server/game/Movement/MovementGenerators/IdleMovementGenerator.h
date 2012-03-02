@@ -32,7 +32,7 @@ class IdleMovementGenerator : public MovementGenerator
         void Initialize(Unit &);
         void Finalize(Unit &) {  }
         void Reset(Unit &);
-        bool Update(Unit &, const uint32) { return true; }
+        bool Update(Unit &, const uint32&) { return true; }
         MovementGeneratorType GetMovementGeneratorType() { return IDLE_MOTION_TYPE; }
 };
 
@@ -46,7 +46,7 @@ class RotateMovementGenerator : public MovementGenerator
         void Initialize(Unit& owner);
         void Finalize(Unit& owner);
         void Reset(Unit& owner) { Initialize(owner); }
-        bool Update(Unit& owner, const uint32 time_diff);
+        bool Update(Unit& owner, const uint32& time_diff);
         MovementGeneratorType GetMovementGeneratorType() { return ROTATE_MOTION_TYPE; }
 
     private:
@@ -62,7 +62,7 @@ class DistractMovementGenerator : public MovementGenerator
         void Initialize(Unit& owner);
         void Finalize(Unit& owner);
         void Reset(Unit& owner) { Initialize(owner); }
-        bool Update(Unit& owner, const uint32 time_diff);
+        bool Update(Unit& owner, const uint32& time_diff);
         MovementGeneratorType GetMovementGeneratorType() { return DISTRACT_MOTION_TYPE; }
 
     private:

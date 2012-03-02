@@ -107,7 +107,7 @@ void WorldSession::HandleQuestgiverHelloOpcode(WorldPacket & recv_data)
     if (sScriptMgr->OnGossipHello(_player, creature))
         return;
 
-    _player->PrepareGossipMenu(creature, creature->GetCreatureInfo()->GossipMenuId, true);
+    _player->PrepareGossipMenu(creature, creature->GetCreatureTemplate()->GossipMenuId, true);
     _player->SendPreparedGossip(creature);
 
     creature->AI()->sGossipHello(_player);
@@ -663,7 +663,7 @@ uint32 WorldSession::getDialogStatus(Player* player, Object* questgiver, uint32 
             continue;
 
         ConditionList conditions = sConditionMgr->GetConditionsForNotGroupedEntry(CONDITION_SOURCE_TYPE_QUEST_SHOW_MARK, quest->GetQuestId());
-        if (!sConditionMgr->IsPlayerMeetToConditions(player, conditions))
+        if (!sConditionMgr->IsObjectMeetToConditions(player, conditions))
             continue;
 
         QuestStatus status = player->GetQuestStatus(quest_id);
@@ -691,7 +691,7 @@ uint32 WorldSession::getDialogStatus(Player* player, Object* questgiver, uint32 
             continue;
 
         ConditionList conditions = sConditionMgr->GetConditionsForNotGroupedEntry(CONDITION_SOURCE_TYPE_QUEST_SHOW_MARK, quest->GetQuestId());
-        if (!sConditionMgr->IsPlayerMeetToConditions(player, conditions))
+        if (!sConditionMgr->IsObjectMeetToConditions(player, conditions))
             continue;
 
         QuestStatus status = player->GetQuestStatus(quest_id);

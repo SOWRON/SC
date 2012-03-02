@@ -206,7 +206,7 @@ bool Pet::LoadPetFromDB(Player* owner, uint32 petentry, uint32 petnumber, bool c
     setFaction(owner->getFaction());
     SetUInt32Value(UNIT_CREATED_BY_SPELL, summon_spell_id);
 
-    CreatureTemplate const* cinfo = GetCreatureInfo();
+    CreatureTemplate const* cinfo = GetCreatureTemplate();
     if (cinfo->type == CREATURE_TYPE_CRITTER)
     {
         m_loading = false;
@@ -707,7 +707,7 @@ bool Pet::CreateBaseAtCreature(Creature* creature)
 {
     ASSERT(creature);
 
-    if (!CreateBaseAtTamed(creature->GetCreatureInfo(), creature->GetMap(), creature->GetPhaseMask()))
+    if (!CreateBaseAtTamed(creature->GetCreatureTemplate(), creature->GetMap(), creature->GetPhaseMask()))
         return false;
 
     Relocate(creature->GetPositionX(), creature->GetPositionY(), creature->GetPositionZ(), creature->GetOrientation());
@@ -719,7 +719,7 @@ bool Pet::CreateBaseAtCreature(Creature* creature)
         return false;
     }
 
-    CreatureTemplate const* cinfo = GetCreatureInfo();
+    CreatureTemplate const* cinfo = GetCreatureTemplate();
     if (!cinfo)
     {
         sLog->outError("CreateBaseAtCreature() failed, creatureInfo is missing!");
@@ -778,7 +778,7 @@ bool Pet::CreateBaseAtTamed(CreatureTemplate const* cinfo, Map* map, uint32 phas
 // TODO: Move stat mods code to pet passive auras
 bool Guardian::InitStatsForLevel(uint8 petlevel)
 {
-    CreatureTemplate const* cinfo = GetCreatureInfo();
+    CreatureTemplate const* cinfo = GetCreatureTemplate();
     ASSERT(cinfo);
 
     SetLevel(petlevel);
@@ -1019,7 +1019,7 @@ bool Pet::HaveInDiet(ItemTemplate const* item) const
     if (!item->FoodType)
         return false;
 
-    CreatureTemplate const* cInfo = GetCreatureInfo();
+    CreatureTemplate const* cInfo = GetCreatureTemplate();
     if (!cInfo)
         return false;
 
@@ -1265,7 +1265,7 @@ void Pet::_SaveAuras(SQLTransaction& trans)
         }
 
         // don't save guid of caster in case we are caster of the spell - guid for pet is generated every pet load, so it won't match saved guid anyways
-        uint64 casterGUID = (itr->second->GetCasterGUID() == GetGUID()) ? NULL : itr->second->GetCasterGUID();
+        uint64 casterGUID = (itr->second->GetCasterGUID() == GetGUID()) ? 0 : itr->second->GetCasterGUID();
 
         trans->PAppend("INSERT INTO pet_aura (guid, caster_guid, spell, effect_mask, recalculate_mask, stackcount, amount0, amount1, amount2, base_amount0, base_amount1, base_amount2, maxduration, remaintime, remaincharges) "
             "VALUES ('%u', '" UI64FMTD "', '%u', '%u', '%u', '%u', '%d', '%d', '%d', '%d', '%d', '%d', '%d', '%d', '%u')",
@@ -1427,7 +1427,7 @@ void Pet::InitLevelupSpellsForLevel()
 {
     uint8 level = getLevel();
 
-    if (PetLevelupSpellSet const* levelupSpells = GetCreatureInfo()->family ? sSpellMgr->GetPetLevelupSpellList(GetCreatureInfo()->family) : NULL)
+    if (PetLevelupSpellSet const* levelupSpells = GetCreatureTemplate()->family ? sSpellMgr->GetPetLevelupSpellList(GetCreatureTemplate()->family) : NULL)
     {
         // PetLevelupSpellSet ordered by levels, process in reversed order
         for (PetLevelupSpellSet::const_reverse_iterator itr = levelupSpells->rbegin(); itr != levelupSpells->rend(); ++itr)
@@ -1441,7 +1441,7 @@ void Pet::InitLevelupSpellsForLevel()
         }
     }
 
-    int32 petSpellsId = GetCreatureInfo()->PetSpellDataId ? -(int32)GetCreatureInfo()->PetSpellDataId : GetEntry();
+    int32 petSpellsId = GetCreatureTemplate()->PetSpellDataId ? -(int32)GetCreatureTemplate()->PetSpellDataId : GetEntry();
 
     // default spells (can be not learned if pet level (as owner level decrease result for example) less first possible in normal game)
     if (PetDefaultSpellsEntry const* defSpells = sSpellMgr->GetPetDefaultSpellsEntry(petSpellsId))
@@ -1565,7 +1565,7 @@ bool Pet::resetTalents()
     if (owner->ToPlayer()->HasAtLoginFlag(AT_LOGIN_RESET_PET_TALENTS))
         owner->ToPlayer()->RemoveAtLoginFlag(AT_LOGIN_RESET_PET_TALENTS, true);
 
-    CreatureTemplate const* ci = GetCreatureInfo();
+    CreatureTemplate const* ci = GetCreatureTemplate();
     if (!ci)
         return false;
     // Check pet talent type
@@ -1793,11 +1793,11 @@ bool Pet::IsPermanentPetFor(Player* owner)
             switch (owner->getClass())
             {
                 case CLASS_WARLOCK:
-                    return GetCreatureInfo()->type == CREATURE_TYPE_DEMON;
+                    return GetCreatureTemplate()->type == CREATURE_TYPE_DEMON;
                 case CLASS_DEATH_KNIGHT:
-                    return GetCreatureInfo()->type == CREATURE_TYPE_UNDEAD;
+                    return GetCreatureTemplate()->type == CREATURE_TYPE_UNDEAD;
                 case CLASS_MAGE:
-                    return GetCreatureInfo()->type == CREATURE_TYPE_ELEMENTAL;
+                    return GetCreatureTemplate()->type == CREATURE_TYPE_ELEMENTAL;
                 default:
                     return false;
             }
@@ -1836,7 +1836,7 @@ bool Pet::HasSpell(uint32 spell) const
 // Get all passive spells in our skill line
 void Pet::LearnPetPassives()
 {
-    CreatureTemplate const* cInfo = GetCreatureInfo();
+    CreatureTemplate const* cInfo = GetCreatureTemplate();
     if (!cInfo)
         return;
 
@@ -1941,7 +1941,7 @@ void Pet::SynchronizeLevelWithOwner()
 
 PetTalentType Pet::GetTalentType()
 {
-    CreatureTemplate const* cInfo = GetCreatureInfo();
+    CreatureTemplate const* cInfo = GetCreatureTemplate();
     if (!cInfo)
         return PET_TALENT_TYPE_NOT_HUNTER_PET;
 

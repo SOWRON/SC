@@ -148,7 +148,7 @@ void WorldSession::SendTrainerList(uint64 guid, const std::string &strTitle)
     if (!unit->isCanTrainingOf(_player, true))
         return;
 
-    CreatureTemplate const *creatureInfo = unit->GetCreatureInfo();
+    CreatureTemplate const *creatureInfo = unit->GetCreatureTemplate();
 
     if (!creatureInfo)
     {
@@ -309,7 +309,7 @@ void WorldSession::HandleGossipHelloOpcode(WorldPacket & recv_data)
     if (!sScriptMgr->OnGossipHello(_player, unit))
     {
 //        _player->TalkedToCreature(unit->GetEntry(), unit->GetGUID());
-        _player->PrepareGossipMenu(unit, unit->GetCreatureInfo()->GossipMenuId, true);
+        _player->PrepareGossipMenu(unit, unit->GetCreatureTemplate()->GossipMenuId, true);
         _player->SendPreparedGossip(unit);
     }
     unit->AI()->sGossipHello(_player);
@@ -583,7 +583,7 @@ void WorldSession::HandleStablePet(WorldPacket & recv_data)
     Pet* pet = _player->GetPet();
 
     // can't place in stable dead pet
-    if (!pet||!pet->isAlive()||pet->getPetType() != HUNTER_PET)
+    if (!pet || !pet->isAlive() || pet->getPetType() != HUNTER_PET)
     {
         SendStableResult(STABLE_ERR_STABLE);
         return;
@@ -809,16 +809,22 @@ void WorldSession::HandleStableSwapPetCallback(PreparedQueryResult result, uint3
         return;
     }
 
-    // move alive pet to slot or delete dead pet
     Pet* pet = _player->GetPet();
+    // The player's pet could have been removed during the delay of the DB callback
+    if (!pet)
+    {
+        SendStableResult(STABLE_ERR_STABLE);
+        return;
+    }
 
+    // move alive pet to slot or delete dead pet
     _player->RemovePet(pet, pet->isAlive() ? PetSaveMode(slot) : PET_SAVE_AS_DELETED);
 
     // summon unstabled pet
-    Pet *newpet = new Pet(_player);
-    if (!newpet->LoadPetFromDB(_player, creature_id, petnumber))
+    Pet* newPet = new Pet(_player);
+    if (!newPet->LoadPetFromDB(_player, petEntry, petId))
     {
-        delete newpet;
+        delete newPet;
         SendStableResult(STABLE_ERR_STABLE);
     }
     else
