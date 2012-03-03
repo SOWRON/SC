@@ -2,6 +2,7 @@
  * Copyright (C) 2011-2012 ArkCORE2 <http://www.arkania.net/>
  * Copyright (C) 2010-2012 Project SkyFire <http://www.projectskyfire.org/> 
  * Copyright (C) 2006-2012 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
+ * Copyright (C) 2008-2012 TrinityCore <http://www.trinitycore.org/>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -18,10 +19,10 @@
  */
 
 /* ScriptData
-SDName: Areatrigger_Scripts
-SD%Complete: 100
-SDComment: Scripts for areatriggers
-SDCategory: Areatrigger
+SFName: Areatrigger_Scripts
+SF%Complete: 100
+SFComment: Scripts for areatriggers
+SFCategory: Areatrigger
 EndScriptData */
 
 /* ContentData
@@ -41,7 +42,7 @@ EndContentData */
 ## at_coilfang_waterfall
 ######*/
 
-enum eCoilfangGOs
+enum CoilfangGOs
 {
     GO_COILFANG_WATERFALL   = 184212
 };
@@ -51,9 +52,7 @@ class AreaTrigger_at_coilfang_waterfall : public AreaTriggerScript
     public:
 
         AreaTrigger_at_coilfang_waterfall()
-            : AreaTriggerScript("at_coilfang_waterfall")
-        {
-        }
+            : AreaTriggerScript("at_coilfang_waterfall") {}
 
         bool OnTrigger(Player* player, AreaTriggerEntry const* /*trigger*/)
         {
@@ -69,7 +68,7 @@ class AreaTrigger_at_coilfang_waterfall : public AreaTriggerScript
 ## at_legion_teleporter
 #####*/
 
-enum eLegionTeleporter
+enum LegionTeleporter
 {
     SPELL_TELE_A_TO         = 37387,
     QUEST_GAINING_ACCESS_A  = 10589,
@@ -83,9 +82,7 @@ class AreaTrigger_at_legion_teleporter : public AreaTriggerScript
     public:
 
         AreaTrigger_at_legion_teleporter()
-            : AreaTriggerScript("at_legion_teleporter")
-        {
-        }
+            : AreaTriggerScript("at_legion_teleporter") {}
 
         bool OnTrigger(Player* player, AreaTriggerEntry const* /*trigger*/)
         {
@@ -113,7 +110,7 @@ class AreaTrigger_at_legion_teleporter : public AreaTriggerScript
 ## at_stormwright_shelf
 ######*/
 
-enum eStormwrightShelf
+enum StormwrightShelf
 {
     QUEST_STRENGTH_OF_THE_TEMPEST               = 12741,
 
@@ -125,9 +122,7 @@ class AreaTrigger_at_stormwright_shelf : public AreaTriggerScript
     public:
 
         AreaTrigger_at_stormwright_shelf()
-            : AreaTriggerScript("at_stormwright_shelf")
-        {
-        }
+            : AreaTriggerScript("at_stormwright_shelf") {}
 
         bool OnTrigger(Player* player, AreaTriggerEntry const* /*trigger*/)
         {
@@ -142,7 +137,7 @@ class AreaTrigger_at_stormwright_shelf : public AreaTriggerScript
 ## at_scent_larkorwi
 ######*/
 
-enum eScentLarkorwi
+enum ScentLarkorwi
 {
     QUEST_SCENT_OF_LARKORWI                     = 4291,
     NPC_LARKORWI_MATE                           = 9683
@@ -153,9 +148,7 @@ class AreaTrigger_at_scent_larkorwi : public AreaTriggerScript
     public:
 
         AreaTrigger_at_scent_larkorwi()
-            : AreaTriggerScript("at_scent_larkorwi")
-        {
-        }
+            : AreaTriggerScript("at_scent_larkorwi") {}
 
         bool OnTrigger(Player* player, AreaTriggerEntry const* /*trigger*/)
         {
@@ -173,7 +166,7 @@ class AreaTrigger_at_scent_larkorwi : public AreaTriggerScript
 ## at_last_rites
 #####*/
 
-enum eAtLastRites
+enum AtLastRites
 {
     QUEST_LAST_RITES                          = 12019,
     QUEST_BREAKING_THROUGH                    = 11898,
@@ -184,9 +177,7 @@ class AreaTrigger_at_last_rites : public AreaTriggerScript
     public:
 
         AreaTrigger_at_last_rites()
-            : AreaTriggerScript("at_last_rites")
-        {
-        }
+            : AreaTriggerScript("at_last_rites") {}
 
         bool OnTrigger(Player* player, AreaTriggerEntry const* trigger)
         {
@@ -224,7 +215,7 @@ class AreaTrigger_at_last_rites : public AreaTriggerScript
 ## at_sholazar_waygate
 ######*/
 
-enum eWaygate
+enum Waygate
 {
     SPELL_SHOLAZAR_TO_UNGORO_TELEPORT           = 52056,
     SPELL_UNGORO_TO_SHOLAZAR_TELEPORT           = 52057,
