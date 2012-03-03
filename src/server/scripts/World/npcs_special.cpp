@@ -1,8 +1,7 @@
 /*
- *
  * Copyright (C) 2011-2012 ArkCORE2 <http://www.arkania.net/>
  * Copyright (C) 2010-2012 Project SkyFire <http://www.projectskyfire.org/> 
- *
+ * Copyright (C) 2006-2012 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
  * Copyright (C) 2008-2012 TrinityCore <http://www.trinitycore.org/>
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -69,7 +68,7 @@ struct SpawnAssociation
     SpawnType spawnType;
 };
 
-enum eEnums
+enum AirforceBot
 {
     SPELL_GUARDS_MARK               = 38067,
     AURA_DURATION_TIME_LEFT         = 5000
@@ -264,7 +263,7 @@ public:
 ## npc_lunaclaw_spirit
 ######*/
 
-enum
+enum Lunaclaw
 {
     QUEST_BODY_HEART_A      = 6001,
     QUEST_BODY_HEART_H      = 6002,
@@ -305,12 +304,15 @@ public:
 # npc_chicken_cluck
 #########*/
 
-#define EMOTE_HELLO         -1070004
-#define EMOTE_CLUCK_TEXT    -1070006
+enum Cluck
+{
+    EMOTE_HELLO         = -1070004,
+    EMOTE_CLUCK_TEXT    = -1070006,
 
-#define QUEST_CLUCK         3861
-#define FACTION_FRIENDLY    35
-#define FACTION_CHICKEN     31
+    QUEST_CLUCK         = 3861,
+    FACTION_FRIENDLY    = 35,
+    FACTION_CHICKEN     = 31
+};
 
 class npc_chicken_cluck : public CreatureScript
 {
@@ -400,9 +402,12 @@ public:
 ## npc_dancing_flames
 ######*/
 
-#define SPELL_BRAZIER       45423
-#define SPELL_SEDUCTION     47057
-#define SPELL_FIERY_AURA    45427
+enum Dancingflames
+{
+    SPELL_BRAZIER       = 45423,
+    SPELL_SEDUCTION     = 47057,
+    SPELL_FIERY_AURA    = 45427
+};
 
 class npc_dancing_flames : public CreatureScript
 {
@@ -489,18 +494,21 @@ public:
 };
 
 /*######
-## Triage quest
+## Triage quest (Signed for 9623)
 ######*/
 
-//signed for 9623
-#define SAY_DOC1    -1000201
-#define SAY_DOC2    -1000202
-#define SAY_DOC3    -1000203
+enum Triage
+{
+    SAY_DOC1            = -1000201,
+    SAY_DOC2            = -1000202,
+    SAY_DOC3            = -1000203,
 
-#define DOCTOR_ALLIANCE     12939
-#define DOCTOR_HORDE        12920
-#define ALLIANCE_COORDS     7
-#define HORDE_COORDS        6
+    DOCTOR_ALLIANCE     = 12939,
+    DOCTOR_HORDE        = 12920,
+
+    ALLIANCE_COORDS     = 7,
+    HORDE_COORDS        = 6
+};
 
 struct Location
 {
@@ -555,6 +563,7 @@ uint32 const HordeSoldierId[3] =
 /*######
 ## npc_doctor (handles both Gustaf Vanhowzen and Gregory Victor)
 ######*/
+
 class npc_doctor : public CreatureScript
 {
 public:
@@ -871,7 +880,7 @@ void npc_doctor::npc_doctorAI::UpdateAI(uint32 const diff)
 
 //TODO: get text for each NPC
 
-enum eGarments
+enum Garments
 {
     SPELL_LESSER_HEAL_R2    = 2052,
     SPELL_FORTITUDE_R1      = 1243,
@@ -909,7 +918,7 @@ public:
 
     struct npc_garments_of_questsAI : public npc_escortAI
     {
-        npc_garments_of_questsAI(Creature* c) : npc_escortAI(c) {Reset();}
+        npc_garments_of_questsAI(Creature* creature) : npc_escortAI(creature) { Reset(); }
 
         uint64 CasterGUID;
 
@@ -1100,7 +1109,10 @@ public:
 ## npc_guardian
 ######*/
 
-#define SPELL_DEATHTOUCH                5
+enum GuardianSpells
+{
+    SPELL_DEATHTOUCH       = 5
+};
 
 class npc_guardian : public CreatureScript
 {
@@ -1143,7 +1155,7 @@ public:
 ## npc_kingdom_of_dalaran_quests
 ######*/
 
-enum eKingdomDalaran
+enum KingdomDalaran
 {
     SPELL_TELEPORT_DALARAN  = 53360,
     ITEM_KT_SIGNET          = 39740,
@@ -1362,17 +1374,20 @@ public:
 ## npc_sayge
 ######*/
 
-#define SPELL_DMG       23768                               //dmg
-#define SPELL_RES       23769                               //res
-#define SPELL_ARM       23767                               //arm
-#define SPELL_SPI       23738                               //spi
-#define SPELL_INT       23766                               //int
-#define SPELL_STM       23737                               //stm
-#define SPELL_STR       23735                               //str
-#define SPELL_AGI       23736                               //agi
-#define SPELL_FORTUNE   23765                               //faire fortune
+enum Sayge
+{
+    SPELL_DMG       = 23768,    // damage
+    SPELL_RES       = 23769,    // Resistance
+    SPELL_ARM       = 23767,    // armor
+    SPELL_SPI       = 23738,    // spirit
+    SPELL_INT       = 23766,    // intellect
+    SPELL_STM       = 23737,    // stamina
+    SPELL_STR       = 23735,    // strength
+    SPELL_AGI       = 23736,    // agility
+    SPELL_FORTUNE   = 23765     // faire fortune
+};
 
-#define GOSSIP_HELLO_SAYGE  "Yes"
+#define GOSSIP_HELLO_SAYGE          "Yes"
 #define GOSSIP_SENDACTION_SAYGE1    "Slay the Man"
 #define GOSSIP_SENDACTION_SAYGE2    "Turn him over to liege"
 #define GOSSIP_SENDACTION_SAYGE3    "Confiscate the corn"
@@ -1518,6 +1533,13 @@ public:
     }
 };
 
+// Steam Tonk
+
+enum Tonk
+{
+    SPELL_TONK_MINE_DETONATE  = 25099
+};
+
 class npc_steam_tonk : public CreatureScript
 {
 public:
@@ -1550,8 +1572,6 @@ public:
         return new npc_steam_tonkAI(creature);
     }
 };
-
-#define SPELL_TONK_MINE_DETONATE 25099
 
 class npc_tonk_mine : public CreatureScript
 {
@@ -1669,15 +1689,16 @@ class npc_winter_reveler : public CreatureScript
 /*####
 ## npc_snake_trap_serpents
 ####*/
+enum TrapSpells
+{
+    SPELL_MIND_NUMBING_POISON    = 25810,   //Viper
+    SPELL_DEADLY_POISON          = 34655,   //Venomous Snake
+    SPELL_CRIPPLING_POISON       = 30981,   //Viper
+    NPC_VIPER                    = 19921
+};
 
-#define SPELL_MIND_NUMBING_POISON    25810   //Viper
-#define SPELL_DEADLY_POISON          34655   //Venomous Snake
-#define SPELL_CRIPPLING_POISON       30981   //Viper
-
-#define VENOMOUS_SNAKE_TIMER 1500
-#define VIPER_TIMER 3000
-
-#define C_VIPER 19921
+#define VENOMOUS_SNAKE_TIMER   1500;
+#define VIPER_TIMER            3000;
 
 class npc_snake_trap : public CreatureScript
 {
@@ -1699,7 +1720,7 @@ public:
 
             CreatureTemplate const* Info = me->GetCreatureTemplate();
 
-            IsViper = Info->Entry == C_VIPER ? true : false;
+            IsViper = Info->Entry == NPC_VIPER ? true : false;
 
             me->SetMaxHealth(uint32(107 * (me->getLevel() - 40) * 0.025f));
             //Add delta to make them not all hit the same time
@@ -1783,6 +1804,7 @@ public:
     }
 };
 
+// Mob Mojo
 #define SAY_RANDOM_MOJO0    "Now that's what I call froggy-style!"
 #define SAY_RANDOM_MOJO1    "Your lily pad or mine?"
 #define SAY_RANDOM_MOJO2    "This won't take long, did it?"
@@ -1886,6 +1908,7 @@ public:
     }
 };
 
+// Mirror Image
 class npc_mirror_image : public CreatureScript
 {
 public:
@@ -1932,6 +1955,7 @@ public:
     }
 };
 
+// ebon gargoyle
 class npc_ebon_gargoyle : public CreatureScript
 {
 public:
@@ -2022,6 +2046,7 @@ public:
     }
 };
 
+// Light Well
 class npc_lightwell : public CreatureScript
 {
 public:
@@ -2053,6 +2078,7 @@ public:
     }
 };
 
+// Training dummy
 enum eTrainingDummy
 {
     NPC_ADVANCED_TARGET_DUMMY                  = 2674,
@@ -2143,8 +2169,13 @@ public:
 /*######
 # npc_shadowfiend
 ######*/
-#define GLYPH_OF_SHADOWFIEND_MANA         58227
-#define GLYPH_OF_SHADOWFIEND              58228
+
+enum Shadowfiend
+{
+    MANA_LEECH                       = 28305,
+    GLYPH_OF_SHADOWFIEND_MANA        = 58227,
+    GLYPH_OF_SHADOWFIEND             = 58228
+};
 
 class npc_shadowfiend : public CreatureScript
 {
@@ -2154,6 +2185,14 @@ public:
     struct npc_shadowfiendAI : public ScriptedAI
     {
         npc_shadowfiendAI(Creature* creature) : ScriptedAI(creature) {}
+
+        void Reset()
+        {
+            if (me->isSummon())
+                if (Unit* owner = me->ToTempSummon()->GetSummoner())
+                    if (Unit* pet = owner->GetGuardianPet())
+                        pet->CastSpell(pet, MANA_LEECH, true);
+        }
 
         void DamageTaken(Unit* /*killer*/, uint32& damage)
         {
@@ -2188,7 +2227,7 @@ public:
 #define GOSSIP_ENGINEERING4   "Icecrown."
 #define GOSSIP_ENGINEERING5   "Storm Peaks."
 
-enum eWormhole
+enum Wormhole
 {
     SPELL_HOWLING_FJORD         = 67838,
     SPELL_SHOLAZAR_BASIN        = 67835,
@@ -2260,7 +2299,7 @@ public:
 ## npc_pet_trainer
 ######*/
 
-enum ePetTrainer
+enum PetTrainer
 {
     TEXT_ISHUNTER               = 5838,
     TEXT_NOTHUNTER              = 5839,
@@ -2324,7 +2363,7 @@ public:
 ## npc_locksmith
 ######*/
 
-enum eLockSmith
+enum LockSmith
 {
     QUEST_HOW_TO_BRAKE_IN_TO_THE_ARCATRAZ = 10704,
     QUEST_DARK_IRON_LEGACY                = 3802,
@@ -2433,7 +2472,7 @@ public:
 ## npc_tabard_vendor
 ######*/
 
-enum
+enum TabardVendor
 {
     QUEST_TRUE_MASTERS_OF_LIGHT = 9737,
     QUEST_THE_UNWRITTEN_PROPHECY = 9762,
@@ -3013,8 +3052,7 @@ public:
     }
 };
 
-/* Power Word Barrier */
-
+// Power Word Barrier
 class npc_power_word_barrier : public CreatureScript
 {
     public:

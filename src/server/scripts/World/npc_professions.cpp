@@ -2,6 +2,7 @@
  * Copyright (C) 2011-2012 ArkCORE2 <http://www.arkania.net/>
  * Copyright (C) 2010-2012 Project SkyFire <http://www.projectskyfire.org/> 
  * Copyright (C) 2006-2012 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
+ * Copyright (C) 2008-2012 TrinityCore <http://www.trinitycore.org/>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -18,10 +19,10 @@
  */
 
 /* ScriptData
-SDName: Npc_Professions
-SD%Complete: 80
-SDComment: Provides learn/unlearn/relearn-options for professions. Not supported: Unlearn engineering, re-learn engineering, re-learn leatherworking.
-SDCategory: NPCs
+SFName: Npc_Professions
+SF%Complete: 80
+SFComment: Provides learn/unlearn/relearn-options for professions. Not supported: Unlearn engineering, re-learn engineering, re-learn leatherworking.
+SFCategory: NPCs
 EndScriptData */
 
 #include "ScriptPCH.h"
@@ -371,7 +372,7 @@ void ProcessUnlearnAction(Player* player, Creature* creature, uint32 spellId, ui
 }
 
 /*###
-# start menues alchemy
+# start menus alchemy
 ###*/
 
 class npc_prof_alchemy : public CreatureScript
@@ -523,7 +524,7 @@ public:
 };
 
 /*###
-# start menues blacksmith
+# start menus blacksmith
 ###*/
 
 class npc_prof_blacksmith : public CreatureScript
@@ -743,7 +744,7 @@ public:
 # engineering trinkets
 ###*/
 
-enum eEngineeringTrinkets
+enum EngineeringTrinkets
 {
     NPC_ZAP                     = 14742,
     NPC_JHORDY                  = 14743,
@@ -769,7 +770,7 @@ enum eEngineeringTrinkets
 class npc_engineering_tele_trinket : public CreatureScript
 {
 public:
-    npc_engineering_tele_trinket() : CreatureScript("npc_engineering_tele_trinket") { }
+    npc_engineering_tele_trinket() : CreatureScript("npc_engineering_tele_trinket") {}
 
     bool CanLearn(Player* player, uint32 textId, uint32 altTextId, uint32 skillValue, uint32 reqSpellId, uint32 spellId, uint32& npcTextId)
     {
@@ -855,7 +856,7 @@ public:
 };
 
 /*###
-# start menues leatherworking
+# start menus leatherworking
 ###*/
 
 class npc_prof_leather : public CreatureScript
