@@ -21,6 +21,7 @@
  */
 
 #include "DBCStores.h"
+#include "ItemPrototype.h"
 #include "Log.h"
 #include "SharedDefines.h"
 #include "SpellMgr.h"
