@@ -5644,34 +5644,6 @@ void AuraEffect::HandleAuraDummy(AuraApplication const* aurApp, uint8 mode, bool
                 else
                     target->RemoveAurasDueToSpell(63611);
             }
-<<<<<<< HEAD
-            break;
-        }
-        case SPELLFAMILY_ROGUE:
-        {
-            switch(GetId())
-            {
-                // Smoke bomb
-                case 76577:
-                {
-                    if (apply)
-                    {
-                        if (SpellEntry const *spellInfo = sSpellStore.LookupEntry(88611))
-                        {
-                            if(Aura* aur = Aura::TryCreate(m_spellInfo, 0, target, this->GetCaster()))
-                            {
-                                aur->SetMaxDuration(GetBase()->GetDuration());
-                                aur->SetDuration(GetBase()->GetDuration());
-                            }
-                        }
-                    }
-                    else
-                        target->RemoveAura(88611);
-                    break;
-                }
-            }
-=======
->>>>>>> e9d464f33b9a0b14974ed2095cd61115415b3722
             break;
         }
         case SPELLFAMILY_ROGUE:
@@ -5698,22 +5670,6 @@ void AuraEffect::HandleAuraDummy(AuraApplication const* aurApp, uint8 mode, bool
                 }
             }
             break;
-        }
-    }
-
-    // stop handling the effect if it was removed by linked event
-    if (apply && aurApp->GetRemoveMode())
-        return;
-
-    if (mode & AURA_EFFECT_HANDLE_REAL)
-    {
-        // pet auras
-        if (PetAura const* petSpell = sSpellMgr->GetPetAura(GetId(), m_effIndex))
-        {
-            if (apply)
-                target->AddPetAura(petSpell);
-            else
-                target->RemovePetAura(petSpell);
         }
     }
 
