@@ -1414,8 +1414,8 @@ public:
                     instance->HandleGameObject(DoorGUID[i], false);
                     // JustCreated = false;
                 }
-				else
-				{ // open all doors, raid wiped
+                else
+                { // open all doors, raid wiped
                     instance->HandleGameObject(GateGUID, true);
                     WalkCount = 1; // skip first wp
 
@@ -1496,7 +1496,7 @@ public:
             instance->SetData(DATA_ILLIDANSTORMRAGEEVENT, IN_PROGRESS);
             for (uint8 i = 0; i < 2; ++i)
 
-			instance->HandleGameObject(DoorGUID[i], false);
+            instance->HandleGameObject(DoorGUID[i], false);
             if (GETCRE(Illidan, IllidanGUID))
             {
                 Illidan->RemoveAurasDueToSpell(SPELL_KNEEL);
@@ -1514,11 +1514,11 @@ public:
             me->setActive(true);
             me->RemoveFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
 
-			if (!JustCreated)
+            if (!JustCreated)
                 return;
             float x, y, z;
 
-			if (GETGO(Gate, GateGUID))
+            if (GETGO(Gate, GateGUID))
                 Gate->GetPosition(x, y, z);
             else
                 return; // if door not spawned, don't crash server

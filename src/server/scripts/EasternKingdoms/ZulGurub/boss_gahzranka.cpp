@@ -42,7 +42,7 @@ class boss_gahzranka : public CreatureScript
         {
             boss_gahzrankaAI(Creature* creature) : ScriptedAI(creature) {}
 
-			uint32 Frostbreath_Timer;
+            uint32 Frostbreath_Timer;
             uint32 MassiveGeyser_Timer;
             uint32 Slam_Timer;
 

@@ -98,18 +98,19 @@ class AuraEffect
         Aura* const m_base;
 
         SpellInfo const* const m_spellInfo;
-        uint8 const m_effIndex;
         int32 const m_baseAmount;
 
         int32 m_amount;
-        bool m_canBeRecalculated;
 
         SpellModifier* m_spellmod;
 
-        bool m_isPeriodic;
         int32 m_periodicTimer;
         int32 m_amplitude;
         uint32 m_tickNumber;
+
+        uint8 const m_effIndex;
+        bool m_canBeRecalculated;
+        bool m_isPeriodic;
     private:
         bool IsPeriodicTickCrit(Unit* target, Unit const* caster) const;
 
@@ -160,6 +161,7 @@ class AuraEffect
         //  skills & talents
         void HandleAuraModPetTalentsPoints(AuraApplication const* aurApp, uint8 mode, bool apply) const;
         void HandleAuraModSkill(AuraApplication const* aurApp, uint8 mode, bool apply) const;
+        void HandleModCanCastWhileWalking(AuraApplication const* aurApp, uint8 mode, bool apply) const;
         //  movement
         void HandleAuraMounted(AuraApplication const* aurApp, uint8 mode, bool apply) const;
         void HandleAuraAllowFlight(AuraApplication const* aurApp, uint8 mode, bool apply) const;

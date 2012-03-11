@@ -183,7 +183,7 @@ public:
                     else
                         SpellCorrupt_Timer = 0;
                 }
-				else SpellCorrupt_Timer -= diff;
+                else SpellCorrupt_Timer -= diff;
             }
 
             if (Check_Timer)
@@ -231,7 +231,7 @@ public:
                         instance->SetData(TYPE_MEDIVH, DONE);
                     }
                 }
-				else Check_Timer -= diff;
+                else Check_Timer -= diff;
             }
 
             //if (!UpdateVictim())
@@ -336,7 +336,7 @@ public:
                 for (uint8 i = 0; i < 3; ++i)
                     DoSummonAtRift(entry);
             }
-			else DoSummonAtRift(entry);
+            else DoSummonAtRift(entry);
         }
 
         void UpdateAI(const uint32 diff)
@@ -349,7 +349,7 @@ public:
                 DoSelectSummon();
                 TimeRiftWave_Timer = 15000;
             }
-			else TimeRiftWave_Timer -= diff;
+            else TimeRiftWave_Timer -= diff;
 
             if (me->IsNonMeleeSpellCasted(false))
                 return;
