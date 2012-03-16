@@ -107,7 +107,7 @@ class boss_saviana_ragefire : public CreatureScript
                         break;
                     case POINT_LAND:
                         me->SetFlying(false);
-                        me->RemoveUnitMovementFlag(MOVEMENTFLAG_LEVITATING);
+                        me->SetLevitate(false);
                         me->SetReactState(REACT_AGGRESSIVE);
                         if (me->GetMotionMaster()->GetCurrentMovementGeneratorType() == POINT_MOTION_TYPE)
                             me->GetMotionMaster()->MovementExpired();
@@ -122,7 +122,7 @@ class boss_saviana_ragefire : public CreatureScript
             {
                 _JustReachedHome();
                 me->SetFlying(false);
-                me->RemoveUnitMovementFlag(MOVEMENTFLAG_LEVITATING);
+                me->SetLevitate(false);
             }
 
             void KilledUnit(Unit* victim)
@@ -148,7 +148,7 @@ class boss_saviana_ragefire : public CreatureScript
                         case EVENT_FLIGHT:
                         {
                             me->SetFlying(true);
-                            me->AddUnitMovementFlag(MOVEMENTFLAG_LEVITATING);
+                            me->SetLevitate(true);
                             me->SetReactState(REACT_PASSIVE);
                             me->GetMotionMaster()->MovePoint(POINT_FLIGHT, SavianaRagefireFlyPos);
                             events.ScheduleEvent(EVENT_FLIGHT, 50000);

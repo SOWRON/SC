@@ -329,7 +329,7 @@ SpellInfo const* SpellScript::GetSpellInfo()
 WorldLocation const* SpellScript::GetTargetDest()
 {
     if (m_spell->m_targets.HasDst())
-        return m_spell->m_targets.GetDst();
+        return m_spell->m_targets.GetDstPos();
     return NULL;
 }
 
@@ -407,6 +407,16 @@ GameObject* SpellScript::GetHitGObj()
         return NULL;
     }
     return m_spell->gameObjTarget;
+}
+
+WorldLocation const* SpellScript::GetHitDest()
+{
+    if (!IsInEffectHook())
+    {
+        sLog->outError("TSCR: Script: `%s` Spell: `%u`: function SpellScript::GetHitGObj was called, but function has no effect in current hook!", m_scriptName->c_str(), m_scriptSpellId);
+        return NULL;
+    }
+    return m_spell->destTarget;
 }
 
 int32 SpellScript::GetHitDamage()
@@ -798,8 +808,6 @@ void AuraScript::PreventDefaultAction()
     {
         case AURA_SCRIPT_HOOK_EFFECT_APPLY:
         case AURA_SCRIPT_HOOK_EFFECT_REMOVE:
-        case AURA_SCRIPT_HOOK_EFFECT_AFTER_APPLY:
-        case AURA_SCRIPT_HOOK_EFFECT_AFTER_REMOVE:
         case AURA_SCRIPT_HOOK_EFFECT_PERIODIC:
         case AURA_SCRIPT_HOOK_EFFECT_PROC:
             m_defaultActionPrevented = true;

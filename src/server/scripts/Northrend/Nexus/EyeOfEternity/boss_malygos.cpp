@@ -270,7 +270,7 @@ public:
         {
             me->SetHomePosition(_homePosition);
 
-            me->AddUnitMovementFlag(MOVEMENTFLAG_LEVITATING);
+            me->SetLevitate(true);
 
             BossAI::EnterEvadeMode();
 
@@ -353,7 +353,7 @@ public:
         {
             _EnterCombat();
 
-            me->RemoveUnitMovementFlag(MOVEMENTFLAG_LEVITATING);
+            me->SetLevitate(false);
             me->SetFlying(false);
 
             me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
@@ -408,7 +408,7 @@ public:
 
         void PrepareForVortex()
         {
-            me->AddUnitMovementFlag(MOVEMENTFLAG_LEVITATING);
+            me->SetLevitate(true);
             me->SetFlying(true);
 
             me->GetMotionMaster()->MovementExpired();
@@ -457,7 +457,7 @@ public:
         {
             SetPhase(PHASE_TWO, true);
 
-            me->AddUnitMovementFlag(MOVEMENTFLAG_LEVITATING);
+            me->SetLevitate(true);
             me->SetFlying(true);
 
             me->GetMotionMaster()->MoveIdle();
@@ -700,7 +700,7 @@ class spell_malygos_vortex_visual : public SpellScriptLoader
                         // Anyway even with this issue, the boss does not enter in evade mode - this prevents iterate an empty list in the next vortex execution.
                         malygos->SetInCombatWithZone();
 
-                        malygos->RemoveUnitMovementFlag(MOVEMENTFLAG_LEVITATING);
+                        malygos->SetLevitate(false);
                         malygos->SetFlying(false);
 
                         malygos->GetMotionMaster()->MoveChase(caster->getVictim());

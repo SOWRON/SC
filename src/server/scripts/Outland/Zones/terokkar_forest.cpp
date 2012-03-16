@@ -492,7 +492,7 @@ public:
                 me->SetInFront(player); break;
             case 30: me->HandleEmoteCommand(EMOTE_ONESHOT_WAVE); break;
             case 31: DoCast(me, SPELL_CAT);
-                me->RemoveUnitMovementFlag(MOVEMENTFLAG_WALKING); break;
+                me->SetWalk(false); break;
             }
         }
 

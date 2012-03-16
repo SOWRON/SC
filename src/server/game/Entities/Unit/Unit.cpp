@@ -60,6 +60,7 @@
 #include "SpellInfo.h"
 #include "MoveSplineInit.h"
 #include "MoveSpline.h"
+#include "ConditionMgr.h"
 
 #include <math.h>
 
@@ -286,7 +287,6 @@ Unit::~Unit()
     _DeleteRemovedAuras();
 
     delete m_charmInfo;
-    delete _vehicleKit;
     delete movespline;
 
     ASSERT(!m_duringRemoveFromWorld);
@@ -3620,7 +3620,7 @@ void Unit::RemoveAuraFromStack(uint32 spellId, uint64 casterGUID, AuraRemoveMode
 {
     for (AuraMap::iterator iter = m_ownedAuras.lower_bound(spellId); iter != m_ownedAuras.upper_bound(spellId);)
     {
-        Aura * aura = iter->second;
+        Aura* aura = iter->second;
         if ((aura->GetType() == UNIT_AURA_TYPE)
             && (!casterGUID || aura->GetCasterGUID() == casterGUID))
         {
@@ -10129,7 +10129,7 @@ void Unit::SetCharm(Unit* charm, bool apply)
 
         if (charm->HasUnitMovementFlag(MOVEMENTFLAG_WALKING))
         {
-            charm->RemoveUnitMovementFlag(MOVEMENTFLAG_WALKING);
+            charm->SetWalk(false);
             charm->SendMovementFlagUpdate();
         }
 
@@ -10226,6 +10226,7 @@ Unit* Unit::GetMagicHitRedirectTarget(Unit* victim, SpellInfo const* spellInfo)
                 && _IsValidAttackTarget(magnet, spellInfo)
                 && IsWithinLOSInMap(magnet))
             {
+                // TODO: handle this charge drop by proc in cast phase on explicit target
                 (*itr)->GetBase()->DropCharge(AURA_REMOVE_BY_EXPIRE);
                 return magnet;
             }
@@ -12721,6 +12722,7 @@ void Unit::setDeathState(DeathState s)
         if (IsNonMeleeSpellCasted(false))
             InterruptNonMeleeSpells(false);
 
+        ExitVehicle();  // Remove applied auras with SPELL_AURA_CONTROL_VEHICLE
         UnsummonAllTotems();
         RemoveAllControlled();
         RemoveAllAurasOnDeath();
@@ -13721,7 +13723,7 @@ void Unit::RemoveFromWorld()
     {
         m_duringRemoveFromWorld = true;
         if (IsVehicle())
-            GetVehicleKit()->Uninstall();
+            RemoveVehicleKit();
 
         RemoveCharmAuras();
         RemoveBindSightAuras();
@@ -13730,7 +13732,7 @@ void Unit::RemoveFromWorld()
         RemoveAllGameObjects();
         RemoveAllDynObjects();
 
-        ExitVehicle();
+        ExitVehicle();  // Remove applied auras with SPELL_AURA_CONTROL_VEHICLE
         UnsummonAllTotems();
         RemoveAllControlled();
 
@@ -13963,12 +13965,7 @@ void CharmInfo::InitCharmCreateSpells()
                 newstate = ACT_PASSIVE;
             else
             {
-                bool autocast = false;
-                for (uint32 i = 0; i < MAX_SPELL_EFFECTS && !autocast; ++i)
-                    if (spellInfo->Effects[i].TargetA.GetType() == TARGET_TYPE_UNIT_TARGET)
-                        autocast = true;
-
-                if (autocast)
+                if (spellInfo->NeedsExplicitUnitTarget())
                 {
                     newstate = ACT_ENABLED;
                     ToggleCreatureAutocast(spellInfo, true);
@@ -15515,7 +15512,7 @@ void Unit::Kill(Unit* victim, bool durabilityLoss)
     // Inform pets (if any) when player kills target)
     // MUST come after victim->setDeathState(JUST_DIED); or pet next target
     // selection will get stuck on same target and break pet react state
-    if (Player* player = ToPlayer())
+    if (player)
     {
         Pet* pet = player->GetPet();
         if (pet && pet->isAlive() && pet->isControlled())
@@ -15651,9 +15648,6 @@ void Unit::Kill(Unit* victim, bool durabilityLoss)
         if (Player* killed = victim->ToPlayer())
             sScriptMgr->OnPlayerKilledByCreature(killerCre, killed);
     }
-
-    if (victim->GetVehicle())
-        victim->ExitVehicle();
 }
 
 void Unit::SetControlled(bool apply, UnitState state)
@@ -16241,26 +16235,6 @@ bool Unit::IsInRaidWith(Unit const* unit) const
       return u1->ToPlayer()->IsInSameRaidWith(u2->ToPlayer());
     else
         return false;
-}
-
-bool Unit::IsTargetMatchingCheck(Unit const* target, SpellTargetSelectionCheckTypes check) const
-{
-    switch (check)
-    {
-        case TARGET_SELECT_CHECK_ENEMY:
-            if (IsControlledByPlayer())
-                return !IsFriendlyTo(target);
-            else
-                return IsHostileTo(target);
-        case TARGET_SELECT_CHECK_ALLY:
-            return IsFriendlyTo(target);
-        case TARGET_SELECT_CHECK_PARTY:
-            return IsInPartyWith(target);
-        case TARGET_SELECT_CHECK_RAID:
-            return IsInRaidWith(target);
-        default:
-            return true;
-    }
 }
 
 void Unit::GetRaidMember(std::list<Unit*> &nearMembers, float radius)
@@ -17076,57 +17050,61 @@ void Unit::JumpTo(WorldObject *obj, float speedZ)
 
 bool Unit::HandleSpellClick(Unit* clicker, int8 seatId)
 {
-    bool success = false;
     uint32 spellClickEntry = GetVehicleKit() ? GetVehicleKit()->GetCreatureEntry() : GetEntry();
     SpellClickInfoMapBounds clickPair = sObjectMgr->GetSpellClickInfoMapBounds(spellClickEntry);
     for (SpellClickInfoContainer::const_iterator itr = clickPair.first; itr != clickPair.second; ++itr)
     {
-        if (itr->second.IsFitToRequirements(clicker, this))
+        //! First check simple relations from clicker to clickee
+        if (!itr->second.IsFitToRequirements(clicker, this))
+            return false;
+
+        //! Check database conditions
+        ConditionList conds = sConditionMgr->GetConditionsForSpellClickEvent(spellClickEntry, itr->second.spellId);
+        ConditionSourceInfo info = ConditionSourceInfo(clicker, this);
+        if (!sConditionMgr->IsObjectMeetToConditions(info, conds))
+            return false;
+
+        Unit* caster = (itr->second.castFlags & NPC_CLICK_CAST_CASTER_CLICKER) ? clicker : this;
+        Unit* target = (itr->second.castFlags & NPC_CLICK_CAST_TARGET_CLICKER) ? clicker : this;
+        uint64 origCasterGUID = (itr->second.castFlags & NPC_CLICK_CAST_ORIG_CASTER_OWNER) ? GetOwnerGUID() : clicker->GetGUID();
+
+        SpellInfo const* spellEntry = sSpellMgr->GetSpellInfo(itr->second.spellId);
+        // if (!spellEntry) should be checked at npc_spellclick load
+
+        if (seatId > -1)
         {
-            Unit* caster = (itr->second.castFlags & NPC_CLICK_CAST_CASTER_CLICKER) ? clicker : this;
-            Unit* target = (itr->second.castFlags & NPC_CLICK_CAST_TARGET_CLICKER) ? clicker : this;
-            uint64 origCasterGUID = (itr->second.castFlags & NPC_CLICK_CAST_ORIG_CASTER_OWNER) ? GetOwnerGUID() : clicker->GetGUID();
-
-            SpellInfo const* spellEntry = sSpellMgr->GetSpellInfo(itr->second.spellId);
-            // if (!spellEntry) should be checked at npc_spellclick load
-
-            if (seatId > -1)
+            uint8 i = 0;
+            bool valid = false;
+            while (i < MAX_SPELL_EFFECTS && !valid)
             {
-                uint8 i = 0;
-                bool valid = false;
-                while (i < MAX_SPELL_EFFECTS && !valid)
+                if (spellEntry->Effects[i].ApplyAuraName == SPELL_AURA_CONTROL_VEHICLE)
                 {
-                    if (spellEntry->Effects[i].ApplyAuraName == SPELL_AURA_CONTROL_VEHICLE)
-                    {
-                        valid = true;
-                        break;
-                    }
-                    ++i;
+                    valid = true;
+                    break;
                 }
-
-                if (!valid)
-                {
-                    sLog->outErrorDb("Spell %u specified in npc_spellclick_spells is not a valid vehicle enter aura!", itr->second.spellId);
-                    return false;
-                }
-
-                if (IsInMap(caster))
-                    caster->CastCustomSpell(itr->second.spellId, SpellValueMod(SPELLVALUE_BASE_POINT0+i), seatId+1, target, true, NULL, NULL, origCasterGUID);
-                else    // This can happen during Player::_LoadAuras
-                {
-                    int32 bp0 = seatId;
-                    Aura::TryRefreshStackOrCreate(spellEntry, MAX_EFFECT_MASK, this, clicker, &bp0, NULL, origCasterGUID);
-                }
+                ++i;
             }
+
+            if (!valid)
+            {
+                sLog->outErrorDb("Spell %u specified in npc_spellclick_spells is not a valid vehicle enter aura!", itr->second.spellId);
+                return false;
+            }
+
+            if (IsInMap(caster))
+                caster->CastCustomSpell(itr->second.spellId, SpellValueMod(SPELLVALUE_BASE_POINT0+i), seatId+1, target, true, NULL, NULL, origCasterGUID);
+            else    // This can happen during Player::_LoadAuras
+            {
+                int32 bp0 = seatId;
+                Aura::TryRefreshStackOrCreate(spellEntry, MAX_EFFECT_MASK, this, clicker, &bp0, NULL, origCasterGUID);
+            }
+        }
+        else
+        {
+            if (IsInMap(caster))
+                caster->CastSpell(target, spellEntry, true, NULL, NULL, origCasterGUID);
             else
-            {
-                if (IsInMap(caster))
-                    caster->CastSpell(target, spellEntry, true, NULL, NULL, origCasterGUID);
-                else
-                    Aura::TryRefreshStackOrCreate(spellEntry, MAX_EFFECT_MASK, this, clicker, NULL, NULL, origCasterGUID);
-            }
-
-            success = true;
+                Aura::TryRefreshStackOrCreate(spellEntry, MAX_EFFECT_MASK, this, clicker, NULL, NULL, origCasterGUID);
         }
     }
 
@@ -17134,7 +17112,7 @@ bool Unit::HandleSpellClick(Unit* clicker, int8 seatId)
     if (creature && creature->IsAIEnabled)
         creature->AI()->DoAction(EVENT_SPELLCLICK);
 
-    return success;
+    return true;
 }
 
 void Unit::EnterVehicle(Unit* base, int8 seatId)
@@ -17220,12 +17198,21 @@ void Unit::ChangeSeat(int8 seatId, bool next)
 
 void Unit::ExitVehicle(Position const* exitPosition)
 {
-    // This function can be called at upper level code to initialize an exit from the passenger's side.
+    //! This function can be called at upper level code to initialize an exit from the passenger's side.
     if (!m_vehicle)
         return;
 
     GetVehicleBase()->RemoveAurasByType(SPELL_AURA_CONTROL_VEHICLE, GetGUID());
-   _ExitVehicle(exitPosition);
+    //! The following call would not even be executed successfully as the
+    //! SPELL_AURA_CONTROL_VEHICLE unapply handler already calls _ExitVehicle without
+    //! specifying an exitposition. The subsequent call below would return on if (!m_vehicle).
+    /*_ExitVehicle(exitPosition);*/
+    //! To do:
+    //! We need to allow SPELL_AURA_CONTROL_VEHICLE unapply handlers in spellscripts
+    //! to specify exit coordinates and either store those per passenger, or we need to
+    //! init spline movement based on those coordinates in unapply handlers, and
+    //! relocate exiting passengers based on Unit::moveSpline data. Either way,
+    //! Coming Soon™
 }
 
 void Unit::_ExitVehicle(Position const* exitPosition)
@@ -17717,6 +17704,32 @@ void Unit::SetFacingToObject(WorldObject* pObject)
 
     // TODO: figure out under what conditions creature will move towards object instead of facing it where it currently is.
     SetFacingTo(GetAngle(pObject));
+}
+
+bool Unit::SetWalk(bool enable)
+{
+    if (enable == IsWalking())
+        return false;
+
+    if (enable)
+        AddUnitMovementFlag(MOVEMENTFLAG_WALKING);
+    else
+        RemoveUnitMovementFlag(MOVEMENTFLAG_WALKING);
+
+    return true;
+}
+
+bool Unit::SetLevitate(bool enable)
+{
+    if (enable == IsLevitating())
+        return false;
+
+    if (enable)
+        AddUnitMovementFlag(MOVEMENTFLAG_WALKING);
+    else
+        RemoveUnitMovementFlag(MOVEMENTFLAG_WALKING);
+
+    return true;
 }
 
 bool Unit::IsAffectedBySpellmod(SpellInfo const *spellInfo, SpellModifier *mod, Spell* spell)
