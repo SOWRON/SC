@@ -36,7 +36,7 @@
 bool Condition::Meets(ConditionSourceInfo& sourceInfo)
 {
     ASSERT(ConditionTarget < MAX_CONDITION_TARGETS);
-    WorldObject* object = sourceInfo.ConditionTargets[ConditionTarget];
+    WorldObject* object = sourceInfo.mConditionTargets[ConditionTarget];
     // object not present, return false
     if (!object)
     {
@@ -204,7 +204,7 @@ bool Condition::Meets(ConditionSourceInfo& sourceInfo)
         }
         case CONDITION_RELATION_TO:
         {
-            if (WorldObject* toObject = sourceInfo.ConditionTargets[ConditionValue1])
+            if (WorldObject* toObject = sourceInfo.mConditionTargets[ConditionValue1])
             {
                 Unit* toUnit = toObject->ToUnit();
                 Unit* unit = object->ToUnit();
@@ -234,7 +234,7 @@ bool Condition::Meets(ConditionSourceInfo& sourceInfo)
         }
         case CONDITION_REACTION_TO:
         {
-            if (WorldObject* toObject = sourceInfo.ConditionTargets[ConditionValue1])
+            if (WorldObject* toObject = sourceInfo.mConditionTargets[ConditionValue1])
             {
                 Unit* toUnit = toObject->ToUnit();
                 Unit* unit = object->ToUnit();
@@ -245,7 +245,7 @@ bool Condition::Meets(ConditionSourceInfo& sourceInfo)
         }
         case CONDITION_DISTANCE_TO:
         {
-            if (WorldObject* toObject = sourceInfo.ConditionTargets[ConditionValue1])
+            if (WorldObject* toObject = sourceInfo.mConditionTargets[ConditionValue1])
                 condMeets = CompareValues(static_cast<ComparisionType>(ConditionValue3), object->GetDistance(toObject), static_cast<float>(ConditionValue2));
             break;
         }
@@ -286,7 +286,7 @@ bool Condition::Meets(ConditionSourceInfo& sourceInfo)
         condMeets = !condMeets;
 
     if (!condMeets)
-        sourceInfo.LastFailedCondition = this;
+        sourceInfo.mLastFailedCondition = this;
 
     bool script = sScriptMgr->OnConditionCheck(this, sourceInfo); // Returns true by default.
     return condMeets && script;
