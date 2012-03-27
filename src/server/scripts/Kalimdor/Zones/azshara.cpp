@@ -34,6 +34,7 @@ EndContentData */
 #include "ScriptPCH.h"
 #include "World.h"
 #include "WorldPacket.h"
+#include "CreatureTextMgr.h"
 
 /*######
 ## mobs_spitelashes

@@ -392,7 +392,6 @@ struct SkyFireStringLocale
     StringVector Content;
 };
 
-
 typedef std::map<uint64, uint64> LinkedRespawnContainer;
 typedef UNORDERED_MAP<uint32, CreatureData> CreatureDataContainer;
 typedef UNORDERED_MAP<uint32, GameObjectData> GameObjectDataContainer;
@@ -1079,8 +1078,8 @@ class ObjectMgr
             if (itr == _skyfireStringLocaleStore.end()) return NULL;
             return &itr->second;
         }
-        const char *GetSkyFireString(int32 entry, LocaleConstant locale_idx) const;
-        const char *GetSkyFireStringForDBCLocale(int32 entry) const { return GetSkyFireString(entry, DBCLocaleIndex); }
+        const char* GetSkyFireString(int32 entry, LocaleConstant locale_idx) const;
+        const char* GetSkyFireStringForDBCLocale(int32 entry) const { return GetSkyFireString(entry, DBCLocaleIndex); }
         LocaleConstant GetDBCLocaleIndex() const { return DBCLocaleIndex; }
         void SetDBCLocaleIndex(LocaleConstant locale) { DBCLocaleIndex = locale; }
 

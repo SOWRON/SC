@@ -31,6 +31,7 @@
 #include "MapManager.h"
 #include "Timer.h"
 #include "WorldRunnable.h"
+#include "OutdoorPvPMgr.h"
 
 #define WORLD_SLEEP_CONST 50
 
@@ -94,4 +95,5 @@ void WorldRunnable::run()
     sMapMgr->UnloadAll();                     // unload all grids (including locked in memory)
     sObjectAccessor->UnloadAll();             // unload 'i_player2corpse' storage and remove from world
     sScriptMgr->Unload();
+    sOutdoorPvPMgr->Die();
 }

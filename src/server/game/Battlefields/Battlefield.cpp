@@ -65,7 +65,7 @@ Battlefield::Battlefield()
 
 Battlefield::~Battlefield() {}
 
-void Battlefield::HandlePlayerEnterZone(Player* player, uint32 /*zone */ )
+void Battlefield::HandlePlayerEnterZone(Player* player, uint32 /*zone*/)
 {
     //If battle is start,
     //  if it not fully > invite player to join the war
@@ -73,9 +73,7 @@ void Battlefield::HandlePlayerEnterZone(Player* player, uint32 /*zone */ )
     if (IsWarTime())
     {
         if (m_PlayersInWar[player->GetTeamId()].size() + m_InvitedPlayers[player->GetTeamId()].size() < m_MaxPlayer)  //Not fully
-        {
             InvitePlayerToWar(player);
-        }
         else                                                //Full
         {
             //TODO:Send packet for announce it to player
@@ -96,7 +94,7 @@ void Battlefield::HandlePlayerEnterZone(Player* player, uint32 /*zone */ )
 }
 
 //Called when a player leave the zone
-void Battlefield::HandlePlayerLeaveZone(Player* player, uint32 /*zone */ )
+void Battlefield::HandlePlayerLeaveZone(Player* player, uint32 /*zone*/)
 {
     if (IsWarTime())
     {
@@ -228,10 +226,6 @@ void Battlefield::InvitePlayerInQueueToWar()
             {
                 if (m_PlayersInWar[player->GetTeamId()].size() + m_InvitedPlayers[player->GetTeamId()].size() < m_MaxPlayer)
                     InvitePlayerToWar(player);
-                else
-                {
-                    //Full
-                }
             }
         }
         m_PlayersInQueue[team].clear();
@@ -258,7 +252,7 @@ void Battlefield::InvitePlayerInZoneToWar()
         }
 }
 
-void Battlefield::InvitePlayerToWar(Player *player)
+void Battlefield::InvitePlayerToWar(Player* player)
 {
     if (!player)
         return;
@@ -868,7 +862,7 @@ Creature *Battlefield::SpawnCreature(uint32 entry, Position pos, TeamId team)
 Creature *Battlefield::SpawnCreature(uint32 entry, float x, float y, float z, float o, TeamId team)
 {
     //Get map object
-    Map* map = const_cast < Map * >(sMapMgr->CreateBaseMap(_MapId));
+    Map* map = const_cast<Map*>(sMapMgr->CreateBaseMap(_MapId));
     if (!map)
     {
         sLog->outError("Can't create creature entry: %u map not found", entry);
@@ -907,7 +901,7 @@ Creature *Battlefield::SpawnCreature(uint32 entry, float x, float y, float z, fl
 GameObject* Battlefield::SpawnGameObject(uint32 entry, float x, float y, float z, float o)
 {
     // Get map object
-    Map* map = const_cast < Map* >(sMapMgr->CreateBaseMap(571));
+    Map* map = const_cast<Map*>(sMapMgr->CreateBaseMap(571));
     if (!map)
         return 0;
 
@@ -1035,12 +1029,12 @@ bool BfCapturePoint::Update(uint32 diff)
                 if (!m_capturePoint->IsWithinDistInMap(player, radius) || !player->IsOutdoorPvPActive())
                     HandlePlayerLeave(player);
 
-    std::list < Player * >players;
+    std::list<Player*>players;
     Trinity::AnyPlayerInObjectRangeCheck checker(m_capturePoint, radius);
     Trinity::PlayerListSearcher < Trinity::AnyPlayerInObjectRangeCheck > searcher(m_capturePoint, players, checker);
     m_capturePoint->VisitNearbyWorldObject(radius, searcher);
 
-    for (std::list < Player * >::iterator itr = players.begin(); itr != players.end(); ++itr)
+    for (std::list<Player*>::iterator itr = players.begin(); itr != players.end(); ++itr)
         if ((*itr)->IsOutdoorPvPActive())
             if (m_activePlayers[(*itr)->GetTeamId()].insert((*itr)->GetGUID()).second)
                 HandlePlayerEnter(*itr);
@@ -1160,7 +1154,7 @@ void BfCapturePoint::SendObjectiveComplete(uint32 id, uint64 guid)
             player->KilledMonsterCredit(id, guid);
 }
 
-bool BfCapturePoint::IsInsideObjective(Player *player) const
+bool BfCapturePoint::IsInsideObjective(Player* player) const
 {
     return m_activePlayers[player->GetTeamId()].find(player->GetGUID()) != m_activePlayers[player->GetTeamId()].end();
 }

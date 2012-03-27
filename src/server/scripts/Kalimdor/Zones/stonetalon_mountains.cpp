@@ -31,6 +31,7 @@ EndContentData */
 
 #include "ScriptPCH.h"
 #include "ScriptedEscortAI.h"
+#include "CreatureTextMgr.h"
 
 /*######
 ## npc_braug_dimspirit

@@ -42,9 +42,9 @@ class Field
                 return 0;
 
             #ifdef TRINITY_DEBUG
-            if (!IsNumeric())
+            if (!IsType(MYSQL_TYPE_TINY))
             {
-                sLog->outSQLDriver("Error: GetUInt8() on non-numeric field.");
+                sLog->outSQLDriver("Warning: GetUInt8() on non-tinyint field.");
                 return 0;
             }
             #endif
@@ -59,9 +59,9 @@ class Field
                 return 0;
 
             #ifdef TRINITY_DEBUG
-            if (!IsNumeric())
+            if (!IsType(MYSQL_TYPE_TINY))
             {
-                sLog->outSQLDriver("Error: GeInt8() on non-numeric field.");
+                sLog->outSQLDriver("Warning: GetInt8() on non-tinyint field.");
                 return 0;
             }
             #endif
@@ -76,9 +76,9 @@ class Field
                 return 0;
 
             #ifdef TRINITY_DEBUG
-            if (!IsNumeric())
+            if (!IsType(MYSQL_TYPE_SHORT) && !IsType(MYSQL_TYPE_YEAR))
             {
-                sLog->outSQLDriver("Error: GetUInt16() on non-numeric field.");
+                sLog->outSQLDriver("Warning: GetUInt16() on non-smallint field.");
                 return 0;
             }
             #endif
@@ -93,9 +93,9 @@ class Field
                 return 0;
 
             #ifdef TRINITY_DEBUG
-            if (!IsNumeric())
+            if (!IsType(MYSQL_TYPE_SHORT) && !IsType(MYSQL_TYPE_YEAR))
             {
-                sLog->outSQLDriver("Error: GetInt16() on non-numeric field.");
+                sLog->outSQLDriver("Warning: GetInt16() on non-smallint field.");
                 return 0;
             }
             #endif
@@ -110,9 +110,9 @@ class Field
                 return 0;
 
             #ifdef TRINITY_DEBUG
-            if (!IsNumeric())
+            if (!IsType(MYSQL_TYPE_INT24) && !IsType(MYSQL_TYPE_LONG))
             {
-                sLog->outSQLDriver("Error: GetUInt32() on non-numeric field.");
+                sLog->outSQLDriver("Warning: GetUInt32() on non-(medium)int field.");
                 return 0;
             }
             #endif
@@ -127,9 +127,9 @@ class Field
                 return 0;
 
             #ifdef TRINITY_DEBUG
-            if (!IsNumeric())
+            if (!IsType(MYSQL_TYPE_INT24) && !IsType(MYSQL_TYPE_LONG))
             {
-                sLog->outSQLDriver("Error: GetInt32() on non-numeric field.");
+                sLog->outSQLDriver("Warning: GetInt32() on non-(medium)int field.");
                 return 0;
             }
             #endif
@@ -144,9 +144,9 @@ class Field
                 return 0;
 
             #ifdef TRINITY_DEBUG
-            if (!IsNumeric())
+            if (!IsType(MYSQL_TYPE_LONGLONG) && !IsType(MYSQL_TYPE_BIT))
             {
-                sLog->outSQLDriver("Error: GetUInt64() on non-numeric field.");
+                sLog->outSQLDriver("Warning: GetUInt64() on non-bigint field.");
                 return 0;
             }
             #endif
@@ -161,9 +161,9 @@ class Field
                 return 0;
 
             #ifdef TRINITY_DEBUG
-            if (!IsNumeric())
+            if (!IsType(MYSQL_TYPE_LONGLONG) && !IsType(MYSQL_TYPE_BIT))
             {
-                sLog->outSQLDriver("Error: GetInt64() on non-numeric field.");
+                sLog->outSQLDriver("Warning: GetInt64() on non-bigint field.");
                 return 0;
             }
             #endif
@@ -178,9 +178,9 @@ class Field
                 return 0.0f;
 
             #ifdef TRINITY_DEBUG
-            if (!IsNumeric())
+            if (!IsType(MYSQL_TYPE_FLOAT))
             {
-                sLog->outSQLDriver("Error: GetFloat() on non-numeric field.");
+                sLog->outSQLDriver("Warning: GetFloat() on non-float field.");
                 return 0.0f;
             }
             #endif
@@ -195,9 +195,9 @@ class Field
                 return 0.0f;
 
             #ifdef TRINITY_DEBUG
-            if (!IsNumeric())
+            if (!IsType(MYSQL_TYPE_DOUBLE))
             {
-                sLog->outSQLDriver("Error: GetDouble() on non-numeric field.");
+                sLog->outSQLDriver("Warning: GetDouble() on non-double field.");
                 return 0.0f;
             }
             #endif
@@ -315,6 +315,11 @@ class Field
                     sLog->outSQLDriver("SQL::SizeForType(): invalid field type %u", uint32(field->type));
                     return 0;
             }
+        }
+
+        bool IsType(enum_field_types type) const
+        {
+            return data.type == type;
         }
 
         bool IsNumeric() const

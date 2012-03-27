@@ -153,7 +153,6 @@ static uint32 copseReclaimDelay[MAX_DEATH_COUNT] = { 30, 60, 120 };
 
 PlayerTaxi::PlayerTaxi()
 {
-    // Taxi nodes
     memset(_taximask, 0, sizeof(_taximask));
 }
 
@@ -315,7 +314,7 @@ bool TradeData::HasItem(uint64 itemGuid) const
     return false;
 }
 
-TradeSlots const TradeData::GetTradeSlotForItem(uint64 itemGuid)
+TradeSlots TradeData::GetTradeSlotForItem(uint64 itemGuid)
 {
     for (uint8 i = 0; i < TRADE_SLOT_COUNT; ++i)
         if (_items[i] == itemGuid)
@@ -444,9 +443,9 @@ void TradeData::SetAccepted(bool state, bool crosssend /*= false*/)
 // 5. Credit instance encounter.
 KillRewarder::KillRewarder(Player* killer, Unit* victim, bool isBattleGround) :
     // 1. Initialize internal variables to default values.
-    _killer(killer), _victim(victim), _isBattleGround(isBattleGround),
-    _isPvP(false), _group(killer->GetGroup()), _groupRate(1.0f),
-    _maxLevel(0), _maxNotGrayMember(NULL), _count(0), _sumLevel(0), _isFullXP(false), _xp(0)
+    _killer(killer), _victim(victim), _group(killer->GetGroup()),
+    _groupRate(1.0f), _maxNotGrayMember(NULL), _count(0), _sumLevel(0), _xp(0),
+    _isFullXP(false), _maxLevel(0), _isBattleGround(isBattleGround), _isPvP(false)
 {
     // mark the credit as pvp if victim is player
     if (victim->GetTypeId() == TYPEID_PLAYER)
@@ -6917,21 +6916,22 @@ void Player::CheckAreaExploreAndOutdoor()
 
         UpdateAchievementCriteria(ACHIEVEMENT_CRITERIA_TYPE_EXPLORE_AREA);
 
-        AreaTableEntry const *p = GetAreaEntryByAreaFlagAndMap(areaFlag, GetMapId());
-        if (!p)
+        AreaTableEntry const* areaEntry = GetAreaEntryByAreaFlagAndMap(areaFlag, GetMapId());
+        if (!areaEntry)
         {
-            sLog->outError("PLAYER: Player %u discovered unknown area (x: %f y: %f map: %u", GetGUIDLow(), GetPositionX(), GetPositionY(), GetMapId());
+            sLog->outError("Player %u discovered unknown area (x: %f y: %f z: %f map: %u", GetGUIDLow(), GetPositionX(), GetPositionY(), GetPositionZ(), GetMapId());
+            return;
         }
-        else if (p->area_level > 0)
+        else if (areaEntry->area_level > 0)
         {
-            uint32 area = p->ID;
+            uint32 area = areaEntry->ID;
             if (getLevel() >= sWorld->getIntConfig(CONFIG_MAX_PLAYER_LEVEL))
             {
                 SendExplorationExperience(area, 0);
             }
             else
             {
-                int32 diff = int32(getLevel()) - p->area_level;
+                int32 diff = int32(getLevel()) - areaEntry->area_level;
                 uint32 XP = 0;
                 if (diff < -5)
                 {
@@ -6945,17 +6945,17 @@ void Player::CheckAreaExploreAndOutdoor()
                     else if (exploration_percent < 0)
                         exploration_percent = 0;
 
-                    XP = uint32(sObjectMgr->GetBaseXP(p->area_level)*exploration_percent/100*sWorld->getRate(RATE_XP_EXPLORE));
+                    XP = uint32(sObjectMgr->GetBaseXP(areaEntry->area_level)*exploration_percent/100*sWorld->getRate(RATE_XP_EXPLORE));
                 }
                 else
                 {
-                    XP = uint32(sObjectMgr->GetBaseXP(p->area_level)*sWorld->getRate(RATE_XP_EXPLORE));
+                    XP = uint32(sObjectMgr->GetBaseXP(areaEntry->area_level)*sWorld->getRate(RATE_XP_EXPLORE));
                 }
 
                 GiveXP(XP, NULL);
                 SendExplorationExperience(area, XP);
             }
-            sLog->outDetail("PLAYER: Player %u discovered a new area: %u", GetGUIDLow(), area);
+            sLog->outDetail("Player %u discovered a new area: %u", GetGUIDLow(), area);
         }
     }
 }
@@ -12374,6 +12374,45 @@ InventoryResult Player::CanUseItem(Item *pItem, bool not_loading) const
     return EQUIP_ERR_ITEM_NOT_FOUND;
 }
 
+InventoryResult Player::CanUseItem(ItemTemplate const* proto) const
+{
+    // Used by group, function NeedBeforeGreed, to know if a prototype can be used by a player
+
+    if (proto)
+    {
+        if ((proto->Flags2 & ITEM_FLAGS_EXTRA_HORDE_ONLY) && GetTeam() != HORDE)
+            return EQUIP_ERR_YOU_CAN_NEVER_USE_THAT_ITEM;
+
+        if ((proto->Flags2 & ITEM_FLAGS_EXTRA_ALLIANCE_ONLY) && GetTeam() != ALLIANCE)
+            return EQUIP_ERR_YOU_CAN_NEVER_USE_THAT_ITEM;
+
+        if ((proto->AllowableClass & getClassMask()) == 0 || (proto->AllowableRace & getRaceMask()) == 0)
+            return EQUIP_ERR_YOU_CAN_NEVER_USE_THAT_ITEM;
+
+        if (proto->RequiredSkill != 0)
+        {
+            if (GetSkillValue(proto->RequiredSkill) == 0)
+                return EQUIP_ERR_NO_REQUIRED_PROFICIENCY;
+            else if (GetSkillValue(proto->RequiredSkill) < proto->RequiredSkillRank)
+                return EQUIP_ERR_CANT_EQUIP_SKILL;
+        }
+
+        if (proto->RequiredSpell != 0 && !HasSpell(proto->RequiredSpell))
+            return EQUIP_ERR_NO_REQUIRED_PROFICIENCY;
+
+        if (getLevel() < proto->RequiredLevel)
+            return EQUIP_ERR_CANT_EQUIP_LEVEL_I;
+
+        // If World Event is not active, prevent using event dependant items
+        if (proto->HolidayId && !IsHolidayActive((HolidayIds)proto->HolidayId))
+            return EQUIP_ERR_CANT_DO_RIGHT_NOW;
+
+        return EQUIP_ERR_OK;
+    }
+
+    return EQUIP_ERR_ITEM_NOT_FOUND;
+}
+
 InventoryResult Player::CanRollForItemInLFG(ItemTemplate const* proto, WorldObject const* lootedObject) const
 {
     LfgDungeonSet const& dungeons = sLFGMgr->GetSelectedDungeons(GetGUID());
@@ -12461,45 +12500,6 @@ InventoryResult Player::CanRollForItemInLFG(ItemTemplate const* proto, WorldObje
     return EQUIP_ERR_OK;
 }
 
-InventoryResult Player::CanUseItem(ItemTemplate const* proto) const
-{
-    // Used by group, function NeedBeforeGreed, to know if a prototype can be used by a player
-
-    if (proto)
-    {
-        if ((proto->Flags2 & ITEM_FLAGS_EXTRA_HORDE_ONLY) && GetTeam() != HORDE)
-            return EQUIP_ERR_YOU_CAN_NEVER_USE_THAT_ITEM;
-
-        if ((proto->Flags2 & ITEM_FLAGS_EXTRA_ALLIANCE_ONLY) && GetTeam() != ALLIANCE)
-            return EQUIP_ERR_YOU_CAN_NEVER_USE_THAT_ITEM;
-
-        if ((proto->AllowableClass & getClassMask()) == 0 || (proto->AllowableRace & getRaceMask()) == 0)
-            return EQUIP_ERR_YOU_CAN_NEVER_USE_THAT_ITEM;
-
-        if (proto->RequiredSkill != 0)
-        {
-            if (GetSkillValue(proto->RequiredSkill) == 0)
-                return EQUIP_ERR_NO_REQUIRED_PROFICIENCY;
-            else if (GetSkillValue(proto->RequiredSkill) < proto->RequiredSkillRank)
-                return EQUIP_ERR_CANT_EQUIP_SKILL;
-        }
-
-        if (proto->RequiredSpell != 0 && !HasSpell(proto->RequiredSpell))
-            return EQUIP_ERR_NO_REQUIRED_PROFICIENCY;
-
-        if (getLevel() < proto->RequiredLevel)
-            return EQUIP_ERR_CANT_EQUIP_LEVEL_I;
-
-        // If World Event is not active, prevent using event dependent items
-        if (proto->HolidayId && !IsHolidayActive((HolidayIds)proto->HolidayId))
-            return EQUIP_ERR_CANT_DO_RIGHT_NOW;
-
-        return EQUIP_ERR_OK;
-    }
-
-    return EQUIP_ERR_ITEM_NOT_FOUND;
-}
-
 Item* Player::StoreNewItem(ItemPosCountVec const& dest, uint32 item, bool update, int32 randomPropertyId)
 {
     AllowedLooterSet allowedLooters;
@@ -12531,7 +12531,7 @@ Item* Player::StoreNewItem(ItemPosCountVec const& dest, uint32 item, bool update
         {
             pItem->SetSoulboundTradeable(allowedLooters);
             pItem->SetUInt32Value(ITEM_FIELD_CREATE_PLAYED_TIME, GetTotalPlayedTime());
-            _itemSoulboundTradeable.push_back(pItem);
+            AddTradeableItem(pItem);
 
             // save data
             std::ostringstream ss;
@@ -12980,7 +12980,7 @@ void Player::MoveItemToInventory(ItemPosCountVec const& dest, Item* pItem, bool 
     }
 
     if (pLastItem->HasFlag(ITEM_FIELD_FLAGS, ITEM_FLAG_BOP_TRADEABLE))
-        _itemSoulboundTradeable.push_back(pLastItem);
+        AddTradeableItem(pLastItem);
 }
 
 void Player::DestroyItem(uint8 bag, uint8 slot, bool update)
@@ -14019,7 +14019,12 @@ void Player::UpdateSoulboundTradeItems()
     }
 }
 
-//TODO: should never allow an item to be added to _itemSoulboundTradeable twice
+void Player::AddTradeableItem(Item* item)
+{
+    _itemSoulboundTradeable.push_back(item);
+}
+
+//TODO: should never allow an item to be added to m_itemSoulboundTradeable twice
 void Player::RemoveTradeableItem(Item* item)
 {
     _itemSoulboundTradeable.remove(item);
@@ -16924,7 +16929,7 @@ void Player::SendQuestTimerFailed(uint32 quest_id)
     }
 }
 
-void Player::SendCanTakeQuestResponse(uint32 msg)
+void Player::SendCanTakeQuestResponse(uint32 msg) const
 {
     WorldPacket data(SMSG_QUESTGIVER_QUEST_INVALID, 4);
     data << uint32(msg);
@@ -18205,7 +18210,7 @@ Item* Player::_LoadItem(SQLTransaction& trans, uint32 zoneId, uint32 timeDiff, F
                     for (Tokens::iterator itr = GUIDlist.begin(); itr != GUIDlist.end(); ++itr)
                         looters.insert(atol(*itr));
                     item->SetSoulboundTradeable(looters);
-                    _itemSoulboundTradeable.push_back(item);
+                    AddTradeableItem(item);
                 }
                 else
                 {
@@ -19164,7 +19169,7 @@ void Player::SaveToDB(bool create /*=false*/)
     outDebugValues();
 
     PreparedStatement* stmt = NULL;
-    uint16 index = 0;
+    uint8 index = 0;
 
     if (create)
     {
@@ -19738,7 +19743,7 @@ void Player::_SaveDailyQuestStatus(SQLTransaction& trans)
     for (uint32 quest_daily_idx = 0; quest_daily_idx < PLAYER_MAX_DAILY_QUESTS; ++quest_daily_idx)
         if (GetUInt32Value(PLAYER_FIELD_DAILY_QUESTS_1+quest_daily_idx))
         {
-            PreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_INS_CHARACTER_DAILYQUESTSTATUS);
+            stmt = CharacterDatabase.GetPreparedStatement(CHAR_INS_CHARACTER_DAILYQUESTSTATUS);
             stmt->setUInt32(0, GetGUIDLow());
             stmt->setUInt32(1, GetUInt32Value(PLAYER_FIELD_DAILY_QUESTS_1+quest_daily_idx));
             stmt->setUInt64(2, uint64(_lastDailyQuestTime));
@@ -21344,16 +21349,25 @@ bool Player::BuyItemFromVendorSlot(uint64 vendorguid, uint32 vendorslot, uint32 
         }
     }
 
-    uint64 price  = crItem->IsGoldRequired(proto) ? proto->BuyPrice * count : 0;
-
-    // reputation discount
-    if (price)
+    uint64 price = 0;
+    if (crItem->IsGoldRequired(proto) && proto->BuyPrice > 0) //Assume price cannot be negative (do not know why it is int32)
+    {
+        uint32 maxCount = MAX_MONEY_AMOUNT / proto->BuyPrice;
+        if((uint32)count > maxCount)
+        {
+            sLog->outError("Player %s tried to buy %u item id %u, causing overflow", GetName(), (uint32)count, proto->ItemId);
+            count = (uint8)maxCount;
+        }
+        price = proto->BuyPrice * count; //it should not exceed MAX_MONEY_AMOUNT
+        
+        // reputation discount
         price = uint32(floor(price * GetReputationPriceDiscount(creature)));
 
-    if (!HasEnoughMoney(price))
-    {
-        SendBuyError(BUY_ERR_NOT_ENOUGHT_MONEY, creature, item, 0);
-        return false;
+        if (!HasEnoughMoney(price))
+        {
+            SendBuyError(BUY_ERR_NOT_ENOUGHT_MONEY, creature, item, 0);
+            return false;
+        }
     }
 
     if ((bag == NULL_BAG && slot == NULL_SLOT) || IsInventoryPos(bag, slot))
@@ -23306,12 +23320,11 @@ uint32 Player::GetBaseWeaponSkillValue (WeaponAttackType attType) const
 void Player::ResurectUsingRequestData()
 {
     /// Teleport before resurrecting by player, otherwise the player might get attacked from creatures near his corpse
-    if (IS_PLAYER_GUID(m_resurrectGUID))
-        TeleportTo(m_resurrectMap, m_resurrectX, m_resurrectY, m_resurrectZ, GetOrientation());
+    TeleportTo(m_resurrectMap, m_resurrectX, m_resurrectY, m_resurrectZ, GetOrientation());
 
     //we cannot resurrect player when we triggered far teleport
     //player will be resurrected upon teleportation
-    if (IsBeingTeleportedFar())
+    if (IsBeingTeleported())
     {
         ScheduleDelayedOperation(DELAYED_RESURRECT_PLAYER);
         return;
@@ -23591,7 +23604,7 @@ void Player::UpdateUnderwaterState(Map* m, float x, float y, float z)
     ZLiquidStatus res = m->getLiquidStatus(x, y, z, MAP_ALL_LIQUIDS, &liquid_status);
     if (!res)
     {
-        _MirrorTimerFlags &= ~(UNDERWATER_INWATER|UNDERWATER_INLAVA|UNDERWATER_INSLIME|UNDERWARER_INDARKWATER);
+        _MirrorTimerFlags &= ~(UNDERWATER_INWATER | UNDERWATER_INLAVA | UNDERWATER_INSLIME | UNDERWARER_INDARKWATER);
         // Small hack for enable breath in WMO
         /* if (IsInWater())
             _MirrorTimerFlags|=UNDERWATER_INWATER; */
@@ -23599,7 +23612,7 @@ void Player::UpdateUnderwaterState(Map* m, float x, float y, float z)
     }
 
     // All liquids type - check under water position
-    if (liquid_status.type&(MAP_LIQUID_TYPE_WATER|MAP_LIQUID_TYPE_OCEAN|MAP_LIQUID_TYPE_MAGMA|MAP_LIQUID_TYPE_SLIME))
+    if (liquid_status.type&(MAP_LIQUID_TYPE_WATER | MAP_LIQUID_TYPE_OCEAN | MAP_LIQUID_TYPE_MAGMA | MAP_LIQUID_TYPE_SLIME))
     {
         if (res & LIQUID_MAP_UNDER_WATER)
             _MirrorTimerFlags |= UNDERWATER_INWATER;
@@ -23616,7 +23629,7 @@ void Player::UpdateUnderwaterState(Map* m, float x, float y, float z)
     // in lava check, anywhere in lava level
     if (liquid_status.type&MAP_LIQUID_TYPE_MAGMA)
     {
-        if (res & (LIQUID_MAP_UNDER_WATER|LIQUID_MAP_IN_WATER|LIQUID_MAP_WATER_WALK))
+        if (res & (LIQUID_MAP_UNDER_WATER | LIQUID_MAP_IN_WATER | LIQUID_MAP_WATER_WALK))
             _MirrorTimerFlags |= UNDERWATER_INLAVA;
         else
             _MirrorTimerFlags &= ~UNDERWATER_INLAVA;
@@ -23624,7 +23637,7 @@ void Player::UpdateUnderwaterState(Map* m, float x, float y, float z)
     // in slime check, anywhere in slime level
     if (liquid_status.type&MAP_LIQUID_TYPE_SLIME)
     {
-        if (res & (LIQUID_MAP_UNDER_WATER|LIQUID_MAP_IN_WATER|LIQUID_MAP_WATER_WALK))
+        if (res & (LIQUID_MAP_UNDER_WATER|LIQUID_MAP_IN_WATER | LIQUID_MAP_WATER_WALK))
             _MirrorTimerFlags |= UNDERWATER_INSLIME;
         else
             _MirrorTimerFlags &= ~UNDERWATER_INSLIME;
@@ -23850,7 +23863,6 @@ void Player::SetTitle(CharTitlesEntry const* title, bool lost)
     GetSession()->SendPacket(&data);
 }
 
-/*-----------------------TRINITY--------------------------*/
 bool Player::isTotalImmunity()
 {
     AuraEffectList const& immune = GetAuraEffectsByType(SPELL_AURA_SCHOOL_IMMUNITY);
@@ -23937,6 +23949,9 @@ void Player::RemoveRunesByAuraEffect(AuraEffect const* aura)
 void Player::RestoreBaseRune(uint8 index)
 {
     AuraEffect const* aura = _runes->runes[index].ConvertAura;
+    // If rune was converted by a non-pasive aura that still active we should keep it converted
+    if (aura && !(aura->GetSpellInfo()->Attributes & SPELL_ATTR0_PASSIVE))
+        return;
     ConvertRune(index, GetBaseRune(index));
     SetRuneConvertAura(index, NULL);
     // Don't drop passive talents providing rune convertion
@@ -25200,7 +25215,7 @@ void Player::ResetMap()
     GetMapRef().unlink();
 }
 
-void Player::SetMap(Map * map)
+void Player::SetMap(Map* map)
 {
     Unit::SetMap(map);
     m_mapRef.link(map, this);
@@ -25947,38 +25962,4 @@ void Player::SetTalentBranchSpec(uint32 branchSpec, uint8 spec)
         learnSpell(talentInfo->SpellID, true);
     }
     sScriptMgr->OnTalentBranchSpecChanged(this, spec, branchSpec);
-}
-
-void Player::setPetSlotUsed(PetSlot slot, bool used)
-{
-    if (used)
-        _petSlotUsed |=  (1 << uint32(slot));
-    else
-        _petSlotUsed &= ~(1 << uint32(slot));
-}
-
-PetSlot Player::getSlotForNewPet()
-{
-    // Some changes here.
-    uint32 last_known = 0;
-    // Call Pet Spells.
-    // 883, 83242, 83243, 83244, 83245
-    //  1     2      3      4      5
-    if (HasSpell(83245))
-        last_known = 5;
-    else if (HasSpell(83244))
-        last_known = 4;
-    else if (HasSpell(83243))
-        last_known = 3;
-    else if (HasSpell(83242))
-        last_known = 2;
-    else if (HasSpell(883))
-        last_known = 1;
-
-    for (uint32 i = uint32(PET_SLOT_HUNTER_FIRST); i < last_known; i++)
-        if((_petSlotUsed & (1 << i)) == 0)
-            return PetSlot(i);
-
-    // If there is no slots available, then we should point that out
-    return PET_SLOT_FULL_LIST; //(PetSlot)last_known;
 }

@@ -41,7 +41,8 @@ m_NumWaitTimeAvg(0), m_NumWaitTimeTank(0), m_NumWaitTimeHealer(0), m_NumWaitTime
     m_update = sWorld->getBoolConfig(CONFIG_DUNGEON_FINDER_ENABLE);
     if (m_update)
     {
-        new LFGScripts();
+        new LFGPlayerScript();
+        new LFGGroupScript();
 
         // Initialize dungeon cache
         for (uint32 i = 0; i < sLFGDungeonStore.GetNumRows(); ++i)
@@ -1259,7 +1260,7 @@ void LFGMgr::GetCompatibleDungeons(LfgDungeonSet& dungeons, const PlayerSet& pla
             }
         }
     }
-    if (dungeons.size())
+    if (!dungeons.empty())
         lockMap.clear();
 }
 
@@ -1272,7 +1273,7 @@ void LFGMgr::GetCompatibleDungeons(LfgDungeonSet& dungeons, const PlayerSet& pla
 */
 bool LFGMgr::CheckGroupRoles(LfgRolesMap& groles, bool removeLeaderFlag /*= true*/)
 {
-    if (!groles.size())
+    if (groles.empty())
         return false;
 
     uint8 damage = 0;

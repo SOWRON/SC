@@ -90,7 +90,6 @@ SpellDestination::SpellDestination(WorldObject const& wObj)
     _position.SetOrientation(wObj.GetOrientation());
 }
 
-
 SpellCastTargets::SpellCastTargets() : m_elevation(0), m_speed(0)
 {
     m_objectTarget = NULL;
@@ -6282,7 +6281,7 @@ void Spell::UpdatePointers()
         SpellDestination& dest = m_destTargets[effIndex];
         if (!dest._transportGUID)
             continue;
-        
+
         if (!transport || transport->GetGUID() != dest._transportGUID)
             transport = ObjectAccessor::GetWorldObject(*m_caster, dest._transportGUID);
 
