@@ -171,6 +171,7 @@ class TicketMgr
 
 private:
     TicketMgr();
+    ~TicketMgr();
 
 public:
     void LoadTickets();

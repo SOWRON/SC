@@ -64,7 +64,7 @@ bool PlayerSocial::AddToSocialList(uint32 friendGuid, bool ignore)
             return false;
     }
 
-    uint32 flag = SOCIAL_FLAG_FRIEND;
+    uint8 flag = SOCIAL_FLAG_FRIEND;
     if (ignore)
         flag = SOCIAL_FLAG_IGNORED;
 
@@ -73,7 +73,7 @@ bool PlayerSocial::AddToSocialList(uint32 friendGuid, bool ignore)
     {
         PreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_UPD_ADD_CHARACTER_SOCIAL_FLAGS);
 
-        stmt->setUInt8(0, uint8(flag));
+        stmt->setUInt8(0, flag);
         stmt->setUInt32(1, GetPlayerGUID());
         stmt->setUInt32(2, friendGuid);
 
@@ -87,7 +87,7 @@ bool PlayerSocial::AddToSocialList(uint32 friendGuid, bool ignore)
 
         stmt->setUInt32(0, GetPlayerGUID());
         stmt->setUInt32(1, friendGuid);
-        stmt->setUInt8(2, uint8(flag));
+        stmt->setUInt8(2, flag);
 
         CharacterDatabase.Execute(stmt);
 
@@ -104,7 +104,7 @@ void PlayerSocial::RemoveFromSocialList(uint32 friendGuid, bool ignore)
     if (itr == m_playerSocialMap.end())                     // not exist
         return;
 
-    uint32 flag = SOCIAL_FLAG_FRIEND;
+    uint8 flag = SOCIAL_FLAG_FRIEND;
     if (ignore)
         flag = SOCIAL_FLAG_IGNORED;
 
@@ -124,7 +124,7 @@ void PlayerSocial::RemoveFromSocialList(uint32 friendGuid, bool ignore)
     {
         PreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_UPD_REM_CHARACTER_SOCIAL_FLAGS);
 
-        stmt->setUInt8(0, uint8(flag));
+        stmt->setUInt8(0, flag);
         stmt->setUInt32(1, GetPlayerGUID());
         stmt->setUInt32(2, friendGuid);
 
@@ -333,7 +333,7 @@ PlayerSocial *SocialMgr::LoadFromDB(PreparedQueryResult result, uint32 guid)
         return social;
 
     uint32 friend_guid = 0;
-    uint32 flags = 0;
+    uint8 flags = 0;
     std::string note = "";
 
     do
@@ -341,7 +341,7 @@ PlayerSocial *SocialMgr::LoadFromDB(PreparedQueryResult result, uint32 guid)
         Field* fields = result->Fetch();
 
         friend_guid = fields[0].GetUInt32();
-        flags = fields[1].GetUInt32();
+        flags = fields[1].GetUInt8();
         note = fields[2].GetString();
 
         social->m_playerSocialMap[friend_guid] = FriendInfo(flags, note);
