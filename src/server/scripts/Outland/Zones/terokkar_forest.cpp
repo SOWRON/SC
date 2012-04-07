@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2011-2012 ArkCORE2 <http://www.arkania.net/>
- * Copyright (C) 2010-2012 Project SkyFire <http://www.projectskyfire.org/> 
+ * Copyright (C) 2011-2012 Project SkyFire <http://www.projectskyfire.org/>
+ * Copyright (C) 2008-2012 TrinityCore <http://www.trinitycore.org/>
  * Copyright (C) 2006-2012 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -63,7 +63,7 @@ public:
 
     struct mob_unkor_the_ruthlessAI : public ScriptedAI
     {
-        mob_unkor_the_ruthlessAI(Creature* c) : ScriptedAI(c) {}
+        mob_unkor_the_ruthlessAI(Creature* creature) : ScriptedAI(creature) {}
 
         bool CanDoQuest;
         uint32 UnkorUnfriendly_Timer;
@@ -169,7 +169,7 @@ public:
 
     struct mob_infested_root_walkerAI : public ScriptedAI
     {
-        mob_infested_root_walkerAI(Creature* c) : ScriptedAI(c) {}
+        mob_infested_root_walkerAI(Creature* creature) : ScriptedAI(creature) {}
 
         void Reset() { }
         void EnterCombat(Unit* /*who*/) { }
@@ -201,7 +201,7 @@ public:
     struct npc_skywingAI : public npc_escortAI
     {
     public:
-        npc_skywingAI(Creature* c) : npc_escortAI(c) {}
+        npc_skywingAI(Creature* creature) : npc_escortAI(creature) {}
 
         void WaypointReached(uint32 i)
         {
@@ -262,7 +262,7 @@ public:
 
     struct mob_rotting_forest_ragerAI : public ScriptedAI
     {
-        mob_rotting_forest_ragerAI(Creature* c) : ScriptedAI(c) {}
+        mob_rotting_forest_ragerAI(Creature* creature) : ScriptedAI(creature) {}
 
         void Reset() { }
         void EnterCombat(Unit* /*who*/) { }
@@ -301,7 +301,7 @@ public:
 
     struct mob_netherweb_victimAI : public ScriptedAI
     {
-        mob_netherweb_victimAI(Creature* c) : ScriptedAI(c) {}
+        mob_netherweb_victimAI(Creature* creature) : ScriptedAI(creature) {}
 
         void Reset() { }
         void EnterCombat(Unit* /*who*/) { }
@@ -388,9 +388,9 @@ public:
 
     struct npc_floonAI : public ScriptedAI
     {
-        npc_floonAI(Creature* c) : ScriptedAI(c)
+        npc_floonAI(Creature* creature) : ScriptedAI(creature)
         {
-            m_uiNormFaction = c->getFaction();
+            m_uiNormFaction = creature->getFaction();
         }
 
         uint32 m_uiNormFaction;
@@ -460,7 +460,7 @@ public:
 
     struct npc_isla_starmaneAI : public npc_escortAI
     {
-        npc_isla_starmaneAI(Creature* c) : npc_escortAI(c) {}
+        npc_isla_starmaneAI(Creature* creature) : npc_escortAI(creature) {}
 
         void WaypointReached(uint32 i)
         {
@@ -660,7 +660,7 @@ public:
 
     struct npc_akunoAI : public npc_escortAI
     {
-        npc_akunoAI(Creature* c) : npc_escortAI(c) {}
+        npc_akunoAI(Creature* creature) : npc_escortAI(creature) {}
 
         void WaypointReached(uint32 i)
         {

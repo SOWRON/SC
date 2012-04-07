@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2011-2012 ArkCORE2 <http://www.arkania.net/>
- * Copyright (C) 2010-2012 Project SkyFire <http://www.projectskyfire.org/> 
+ * Copyright (C) 2011-2012 Project SkyFire <http://www.projectskyfire.org/>
+ * Copyright (C) 2008-2012 TrinityCore <http://www.trinitycore.org/>
  * Copyright (C) 2006-2012 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -91,7 +91,7 @@ class example_creature : public CreatureScript
         {
             // *** HANDLED FUNCTION ***
             //This is the constructor, called only once when the Creature is first created
-            example_creatureAI(Creature* c) : ScriptedAI(c) {}
+            example_creatureAI(Creature* creature) : ScriptedAI(creature) {}
 
             // *** CUSTOM VARIABLES ****
             //These variables are for use only by this individual script.

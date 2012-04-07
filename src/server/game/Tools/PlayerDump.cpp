@@ -427,10 +427,8 @@ DumpReturn PlayerDumpReader::LoadDump(const std::string& file, uint32 account, s
 
     if (ObjectMgr::CheckPlayerName(name, true) == CHAR_NAME_SUCCESS)
     {
-        PreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_SEL_CHECK_NAME);
-        stmt->setString(0, name);
-        PreparedQueryResult result = CharacterDatabase.Query(stmt);
-
+        CharacterDatabase.EscapeString(name);              // for safe, we use name only for sql quearies anyway
+        result = CharacterDatabase.PQuery("SELECT 1 FROM characters WHERE name = '%s'", name.c_str());
         if (result)
             name = "";                                      // use the one from the dump
     }
@@ -532,11 +530,9 @@ DumpReturn PlayerDumpReader::LoadDump(const std::string& file, uint32 account, s
                 {
                     // check if the original name already exists
                     name = getnth(line, 3);
+                    CharacterDatabase.EscapeString(name);
 
-                    PreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_SEL_CHECK_NAME);
-                    stmt->setString(0, name);
-                    PreparedQueryResult result = CharacterDatabase.Query(stmt);
-
+                    result = CharacterDatabase.PQuery("SELECT 1 FROM characters WHERE name = '%s'", name.c_str());
                     if (result)
                         if (!changenth(line, 37, "1"))       // characters.at_login set to "rename on login"
                             ROLLBACK(DUMP_FILE_BROKEN);

@@ -1,5 +1,4 @@
 /*
- * Copyright (C) 2011-2012 ArkCORE2 <http://www.arkania.net/>
  * Copyright (C) 2011-2012 Project SkyFire <http://www.projectskyfire.org/>
  * Copyright (C) 2008-2012 Trinity <http://www.trinitycore.org/>
  * Copyright (C) 2005-2012 MaNGOS <http://www.getmangos.com/>
@@ -63,7 +62,7 @@ class npc_thug: public CreatureScript
 
     struct npc_thugAI : public ScriptedAI
     {
-        npc_thugAI(Creature *creature) : ScriptedAI(creature) {}
+        npc_thugAI(Creature* creature) : ScriptedAI(creature) {}
 
         uint32 SummonTimer;
         uint64 PlayerGUID;
@@ -289,7 +288,7 @@ class npc_horatio : public CreatureScript
 
     struct npc_horatioAI : public ScriptedAI
     {
-        npc_horatioAI(Creature *creature) : ScriptedAI(creature) {}
+        npc_horatioAI(Creature* creature) : ScriptedAI(creature) {}
 
         uint8 Phase;
         uint32 TextTimer;
@@ -614,7 +613,7 @@ class npc_crate_mine : public CreatureScript
 
     struct npc_crate_mineAI  : public ScriptedAI
     {
-        npc_crate_mineAI(Creature *creature) : ScriptedAI(creature) {}
+        npc_crate_mineAI(Creature* creature) : ScriptedAI(creature) {}
 
         uint8 Phase;
         uint32 EntryTime;
@@ -814,7 +813,7 @@ class npc_homeless_citizen : public CreatureScript
 
     struct npc_homeless_citizenAI  : public ScriptedAI
     {
-        npc_homeless_citizenAI(Creature *creature) : ScriptedAI(creature) {}
+        npc_homeless_citizenAI(Creature* creature) : ScriptedAI(creature) {}
 
         uint8 Phase;
         uint32 HungryTimer;
@@ -1217,7 +1216,7 @@ class npc_shadowy_tower : public CreatureScript
 
     struct npc_shadowy_towerAI  : public ScriptedAI
     {
-        npc_shadowy_towerAI(Creature *creature) : ScriptedAI(creature) {}
+        npc_shadowy_towerAI(Creature* creature) : ScriptedAI(creature) {}
 
         uint8 Phase;
         uint32 SummonTimer;
@@ -1887,7 +1886,7 @@ class npc_defias_blackguard : public CreatureScript
 
     struct npc_defias_blackguardAI : public ScriptedAI
     {
-        npc_defias_blackguardAI(Creature *creature) : ScriptedAI(creature) {}
+        npc_defias_blackguardAI(Creature* creature) : ScriptedAI(creature) {}
 
         uint32 timer_DoFire;
         uint32 timer_DoTheStun;
@@ -1944,7 +1943,7 @@ class npc_fire_trigger : public CreatureScript
 
     struct npc_fire_triggerAI : public ScriptedAI
     {
-        npc_fire_triggerAI(Creature *creature) : ScriptedAI(creature) {}
+        npc_fire_triggerAI(Creature* creature) : ScriptedAI(creature) {}
 
         uint32 StopFireTimer;
 
@@ -1984,7 +1983,7 @@ class npc_summoner : public CreatureScript
 
     struct npc_summonerAI : public ScriptedAI
     {
-        npc_summonerAI(Creature *creature) : ScriptedAI(creature) {}
+        npc_summonerAI(Creature* creature) : ScriptedAI(creature) {}
 
         void Reset()
         {
@@ -2011,7 +2010,7 @@ class npc_horatio_investigate : public CreatureScript
 
     struct npc_horatio_investigateAI : public ScriptedAI
     {
-        npc_horatio_investigateAI(Creature *creature) : ScriptedAI(creature) {}
+        npc_horatio_investigateAI(Creature* creature) : ScriptedAI(creature) {}
 
         uint8 Phase;
         uint32 TextTimer;

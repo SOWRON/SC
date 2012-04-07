@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2011-2012 ArkCORE2 <http://www.arkania.net/>
- * Copyright (C) 2010-2012 Project SkyFire <http://www.projectskyfire.org/> 
+ * Copyright (C) 2011-2012 Project SkyFire <http://www.projectskyfire.org/>
+ * Copyright (C) 2008-2012 TrinityCore <http://www.trinitycore.org/>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -91,9 +91,9 @@ public:
 
     struct boss_sjonnirAI : public ScriptedAI
     {
-        boss_sjonnirAI(Creature* c) : ScriptedAI(c), lSummons(me)
+        boss_sjonnirAI(Creature* creature) : ScriptedAI(creature), lSummons(me)
         {
-            instance = c->GetInstanceScript();
+            instance = creature->GetInstanceScript();
         }
 
         bool bIsFrenzy;
@@ -258,7 +258,7 @@ public:
 
     struct mob_malformed_oozeAI : public ScriptedAI
     {
-        mob_malformed_oozeAI(Creature* c) : ScriptedAI(c) {}
+        mob_malformed_oozeAI(Creature* creature) : ScriptedAI(creature) {}
 
         uint32 uiMergeTimer;
 
@@ -300,9 +300,9 @@ public:
 
     struct mob_iron_sludgeAI : public ScriptedAI
     {
-        mob_iron_sludgeAI(Creature* c) : ScriptedAI(c)
+        mob_iron_sludgeAI(Creature* creature) : ScriptedAI(creature)
         {
-            instance = c->GetInstanceScript();
+            instance = creature->GetInstanceScript();
         }
 
         InstanceScript* instance;

@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2011-2012 ArkCORE2 <http://www.arkania.net/>
- * Copyright (C) 2010-2012 Project SkyFire <http://www.projectskyfire.org/> 
+ * Copyright (C) 2011-2012 Project SkyFire <http://www.projectskyfire.org/>
+ * Copyright (C) 2008-2012 TrinityCore <http://www.trinitycore.org/>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -633,7 +633,7 @@ public:
 
     struct npc_ghostly_priestAI: public ScriptedAI
     {
-        npc_ghostly_priestAI(Creature* c) : ScriptedAI(c)
+        npc_ghostly_priestAI(Creature* creature) : ScriptedAI(creature)
         {
         }
 
@@ -714,7 +714,7 @@ public:
 
     struct npc_phantom_mageAI: public ScriptedAI
     {
-        npc_phantom_mageAI(Creature* c) : ScriptedAI(c)
+        npc_phantom_mageAI(Creature* creature) : ScriptedAI(creature)
         {
         }
 
@@ -790,7 +790,7 @@ public:
 
     struct npc_phantom_hallucinationAI : public npc_phantom_mage::npc_phantom_mageAI
     {
-        npc_phantom_hallucinationAI(Creature* c) : npc_phantom_mage::npc_phantom_mageAI(c)
+        npc_phantom_hallucinationAI(Creature* creature) : npc_phantom_mage::npc_phantom_mageAI(creature)
         {
         }
 
@@ -813,7 +813,7 @@ public:
 
     struct npc_shadowy_mercenaryAI: public ScriptedAI
     {
-        npc_shadowy_mercenaryAI(Creature* c) : ScriptedAI(c)
+        npc_shadowy_mercenaryAI(Creature* creature) : ScriptedAI(creature)
         {
         }
 
@@ -883,7 +883,7 @@ public:
 
     struct npc_spectral_footmanAI: public ScriptedAI
     {
-        npc_spectral_footmanAI(Creature* c) : ScriptedAI(c)
+        npc_spectral_footmanAI(Creature* creature) : ScriptedAI(creature)
         {
         }
 
@@ -947,7 +947,7 @@ public:
 
     struct npc_tortured_riflemanAI  : public ScriptedAI
     {
-        npc_tortured_riflemanAI(Creature* c) : ScriptedAI(c)
+        npc_tortured_riflemanAI(Creature* creature) : ScriptedAI(creature)
         {
         }
 

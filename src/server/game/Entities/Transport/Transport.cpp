@@ -135,8 +135,8 @@ void MapManager::LoadTransportNPCs()
 {
     uint32 oldMSTime = getMSTime();
 
-    //                                                 0       1            2                3             4             5             6        7
-    QueryResult result = WorldDatabase.Query("SELECT guid, npc_entry, transport_entry, TransOffsetX, TransOffsetY, TransOffsetZ, TransOffsetO, emote FROM creature_transport");
+    //                                                         0    1          2                3             4             5             6             7
+    QueryResult result = WorldDatabase.PQuery("SELECT guid, npc_entry, transport_entry, TransOffsetX, TransOffsetY, TransOffsetZ, TransOffsetO, emote FROM creature_transport");
 
     if (!result)
     {
@@ -150,14 +150,14 @@ void MapManager::LoadTransportNPCs()
     do
     {
         Field* fields = result->Fetch();
-        uint32 guid = fields[0].GetInt32();
-        uint32 entry = fields[1].GetInt32();
-        uint32 transportEntry = fields[2].GetInt32();
+        uint32 guid = fields[0].GetUInt32();
+        uint32 entry = fields[1].GetUInt32();
+        uint32 transportEntry = fields[2].GetUInt32();
         float tX = fields[3].GetFloat();
         float tY = fields[4].GetFloat();
         float tZ = fields[5].GetFloat();
         float tO = fields[6].GetFloat();
-        uint32 anim = fields[7].GetInt32();
+        uint32 anim = fields[7].GetUInt32();
 
         for (MapManager::TransportSet::iterator itr = m_Transports.begin(); itr != m_Transports.end(); ++itr)
         {
@@ -382,11 +382,8 @@ void Transport::TeleportTransport(uint32 newMapid, float x, float y, float z)
         UpdateForMap(newMap);
     }
 
-    // This is a "workaround"
-#ifdef TRINITY_DEBUG
     for (CreatureSet::iterator itr = m_NPCPassengerSet.begin(); itr != m_NPCPassengerSet.end(); ++itr)
         (*itr)->FarTeleportTo(newMap, x, y, z, (*itr)->GetOrientation());
-#endif
 }
 
 bool Transport::AddPassenger(Player* passenger)
@@ -434,10 +431,8 @@ void Transport::Update(uint32 p_diff)
         DoEventIfAny(*m_curr, false);
 
         // first check help in case client-server transport coordinates de-synchronization
-        if (m_curr->second.mapid != GetMapId())
+        if (m_curr->second.mapid != GetMapId() || m_curr->second.teleport)
             TeleportTransport(m_curr->second.mapid, m_curr->second.x, m_curr->second.y, m_curr->second.z);
-        else if (m_curr->second.teleport)
-            TeleportTransport(m_next->second.mapid, m_next->second.x, m_next->second.y, m_next->second.z);
         else
         {
             Relocate(m_curr->second.x, m_curr->second.y, m_curr->second.z, GetAngle(m_next->second.x, m_next->second.y) + float(M_PI));

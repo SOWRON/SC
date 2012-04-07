@@ -39,7 +39,7 @@
 template<>
 void RandomMovementGenerator<Creature>::SetRandomLocation(Creature &creature)
 {
-    float respX, respY, respZ, respO, currZ, destX, destY, destZ, travelDistZ;
+    float respX, respY, respZ, respO, destX, destY, destZ, travelDistZ;
     creature.GetHomePosition(respX, respY, respZ, respO);
     Map const* map = creature.GetBaseMap();
 

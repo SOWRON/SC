@@ -1,6 +1,11 @@
 /*
+<<<<<<< HEAD
  * Copyright (C) 2011-2012 ArkCORE2 <http://www.arkania.net/>
  * Copyright (C) 2010-2012 Project SkyFire <http://www.projectskyfire.org/> 
+=======
+ * Copyright (C) 2011-2012 Project SkyFire <http://www.projectskyfire.org/>
+ * Copyright (C) 2008-2012 TrinityCore <http://www.trinitycore.org/>
+>>>>>>> 5aaa86da5bd0665b9ac9b3dde9e11708c8d0b4d0
  * Copyright (C) 2006-2012 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -50,9 +55,9 @@ public:
 
     struct boss_kriAI : public ScriptedAI
     {
-        boss_kriAI(Creature* c) : ScriptedAI(c)
+        boss_kriAI(Creature* creature) : ScriptedAI(creature)
         {
-            instance = c->GetInstanceScript();
+            instance = creature->GetInstanceScript();
         }
 
         InstanceScript* instance;
@@ -146,9 +151,9 @@ public:
 
     struct boss_vemAI : public ScriptedAI
     {
-        boss_vemAI(Creature* c) : ScriptedAI(c)
+        boss_vemAI(Creature* creature) : ScriptedAI(creature)
         {
-            instance = c->GetInstanceScript();
+            instance = creature->GetInstanceScript();
         }
 
         InstanceScript* instance;
@@ -238,9 +243,9 @@ public:
 
     struct boss_yaujAI : public ScriptedAI
     {
-        boss_yaujAI(Creature* c) : ScriptedAI(c)
+        boss_yaujAI(Creature* creature) : ScriptedAI(creature)
         {
-            instance = c->GetInstanceScript();
+            instance = creature->GetInstanceScript();
         }
 
         InstanceScript* instance;

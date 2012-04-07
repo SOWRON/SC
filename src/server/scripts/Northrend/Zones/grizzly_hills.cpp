@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2011-2012 ArkCORE2 <http://www.arkania.net/>
- * Copyright (C) 2010-2012 Project SkyFire <http://www.projectskyfire.org/> 
+ * Copyright (C) 2011-2012 Project SkyFire <http://www.projectskyfire.org/>
+ * Copyright (C) 2008-2012 TrinityCore <http://www.trinitycore.org/>
  * Copyright (C) 2006-2012 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -340,7 +340,7 @@ public:
 
     struct npc_mrfloppyAI : public ScriptedAI
     {
-        npc_mrfloppyAI(Creature* c) : ScriptedAI(c) {}
+        npc_mrfloppyAI(Creature* creature) : ScriptedAI(creature) {}
 
         uint64 EmilyGUID;
         uint64 RWORGGUID;
@@ -578,7 +578,7 @@ public:
 
     struct npc_wounded_skirmisherAI : public ScriptedAI
     {
-        npc_wounded_skirmisherAI(Creature* c) : ScriptedAI(c) {}
+        npc_wounded_skirmisherAI(Creature* creature) : ScriptedAI(creature) {}
 
         uint64 uiPlayerGUID;
 

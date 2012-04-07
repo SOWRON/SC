@@ -53,13 +53,13 @@ uint32 BG_WSG_Reputation[BG_HONOR_MODE_NUM][BG_WSG_REWARD_NUM] = {
 
 BattlegroundWS::BattlegroundWS()
 {
-    _BgObjects.resize(BG_WS_OBJECT_MAX);
-    _BgCreatures.resize(BG_CREATURES_MAX_WS);
+    BgObjects.resize(BG_WS_OBJECT_MAX);
+    BgCreatures.resize(BG_CREATURES_MAX_WS);
 
-    _StartMessageIds[BG_STARTING_EVENT_FIRST]  = LANG_BG_WS_START_TWO_MINUTES;
-    _StartMessageIds[BG_STARTING_EVENT_SECOND] = LANG_BG_WS_START_ONE_MINUTE;
-    _StartMessageIds[BG_STARTING_EVENT_THIRD]  = LANG_BG_WS_START_HALF_MINUTE;
-    _StartMessageIds[BG_STARTING_EVENT_FOURTH] = LANG_BG_WS_HAS_BEGUN;
+    StartMessageIds[BG_STARTING_EVENT_FIRST]  = LANG_BG_WS_START_TWO_MINUTES;
+    StartMessageIds[BG_STARTING_EVENT_SECOND] = LANG_BG_WS_START_ONE_MINUTE;
+    StartMessageIds[BG_STARTING_EVENT_THIRD]  = LANG_BG_WS_START_HALF_MINUTE;
+    StartMessageIds[BG_STARTING_EVENT_FOURTH] = LANG_BG_WS_HAS_BEGUN;
     m_FlagDebuffState = 0;
 }
 
@@ -213,7 +213,7 @@ void BattlegroundWS::AddPlayer(Player* player)
     //create score and add it to map, default values are set in constructor
     BattlegroundWGScore* sc = new BattlegroundWGScore;
 
-    _PlayerScores[player->GetGUID()] = sc;
+    PlayerScores[player->GetGUID()] = sc;
 }
 
 void BattlegroundWS::RespawnFlag(uint32 Team, bool captured)
@@ -450,7 +450,7 @@ void BattlegroundWS::EventPlayerClickedOnFlag(Player* Source, GameObject* target
 
     //alliance flag picked up from base
     if (Source->GetTeam() == HORDE && this->GetFlagState(ALLIANCE) == BG_WS_FLAG_STATE_ON_BASE
-        && this->_BgObjects[BG_WS_OBJECT_A_FLAG] == target_obj->GetGUID())
+        && this->BgObjects[BG_WS_OBJECT_A_FLAG] == target_obj->GetGUID())
     {
         message_id = LANG_BG_WS_PICKEDUP_AF;
         type = CHAT_MSG_BG_SYSTEM_HORDE;
@@ -469,7 +469,7 @@ void BattlegroundWS::EventPlayerClickedOnFlag(Player* Source, GameObject* target
 
     //horde flag picked up from base
     if (Source->GetTeam() == ALLIANCE && this->GetFlagState(HORDE) == BG_WS_FLAG_STATE_ON_BASE
-        && this->_BgObjects[BG_WS_OBJECT_H_FLAG] == target_obj->GetGUID())
+        && this->BgObjects[BG_WS_OBJECT_H_FLAG] == target_obj->GetGUID())
     {
         message_id = LANG_BG_WS_PICKEDUP_HF;
         type = CHAT_MSG_BG_SYSTEM_ALLIANCE;
@@ -728,9 +728,9 @@ void BattlegroundWS::Reset()
     m_LastFlagCaptureTeam               = 0;
 
     /* Spirit nodes is static at this BG and then not required deleting at BG reset.
-    if (_BgCreatures[WS_SPIRIT_MAIN_ALLIANCE])
+    if (BgCreatures[WS_SPIRIT_MAIN_ALLIANCE])
         DelCreature(WS_SPIRIT_MAIN_ALLIANCE);
-    if (_BgCreatures[WS_SPIRIT_MAIN_HORDE])
+    if (BgCreatures[WS_SPIRIT_MAIN_HORDE])
         DelCreature(WS_SPIRIT_MAIN_HORDE);
     */
 }
@@ -761,8 +761,8 @@ void BattlegroundWS::HandleKillPlayer(Player* player, Player* killer)
 
 void BattlegroundWS::UpdatePlayerScore(Player* Source, uint32 type, uint32 value, bool doAddHonor)
 {
-    BattlegroundScoreMap::iterator itr = _PlayerScores.find(Source->GetGUID());
-    if (itr == _PlayerScores.end())                         // player not found
+    BattlegroundScoreMap::iterator itr = PlayerScores.find(Source->GetGUID());
+    if (itr == PlayerScores.end())                         // player not found
         return;
 
     switch (type)

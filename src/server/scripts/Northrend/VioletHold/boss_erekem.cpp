@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2011-2012 ArkCORE2 <http://www.arkania.net/>
- * Copyright (C) 2010-2012 Project SkyFire <http://www.projectskyfire.org/> 
+ * Copyright (C) 2011-2012 Project SkyFire <http://www.projectskyfire.org/>
+ * Copyright (C) 2008-2012 TrinityCore <http://www.trinitycore.org/>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -56,9 +56,9 @@ public:
 
     struct boss_erekemAI : public ScriptedAI
     {
-        boss_erekemAI(Creature* c) : ScriptedAI(c)
+        boss_erekemAI(Creature* creature) : ScriptedAI(creature)
         {
-            instance = c->GetInstanceScript();
+            instance = creature->GetInstanceScript();
         }
 
         uint32 uiBloodlustTimer;
@@ -270,9 +270,9 @@ public:
 
     struct mob_erekem_guardAI : public ScriptedAI
     {
-        mob_erekem_guardAI(Creature* c) : ScriptedAI(c)
+        mob_erekem_guardAI(Creature* creature) : ScriptedAI(creature)
         {
-            instance = c->GetInstanceScript();
+            instance = creature->GetInstanceScript();
         }
 
         uint32 uiGushingWoundTimer;

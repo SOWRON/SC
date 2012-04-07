@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2011-2012 ArkCORE2 <http://www.arkania.net/>
- * Copyright (C) 2010-2012 Project SkyFire <http://www.projectskyfire.org/> 
+ * Copyright (C) 2011-2012 Project SkyFire <http://www.projectskyfire.org/>
+ * Copyright (C) 2008-2012 TrinityCore <http://www.trinitycore.org/>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -69,7 +69,7 @@ public:
 
     struct boss_maexxnaAI : public BossAI
     {
-        boss_maexxnaAI(Creature* c) : BossAI(c, BOSS_MAEXXNA) {}
+        boss_maexxnaAI(Creature* creature) : BossAI(creature, BOSS_MAEXXNA) {}
 
         bool enraged;
 
@@ -159,7 +159,7 @@ public:
 
     struct mob_webwrapAI : public NullCreatureAI
     {
-        mob_webwrapAI(Creature* c) : NullCreatureAI(c), victimGUID(0) {}
+        mob_webwrapAI(Creature* creature) : NullCreatureAI(creature), victimGUID(0) {}
 
         uint64 victimGUID;
 

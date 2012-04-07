@@ -1,8 +1,5 @@
 /*
- *
- * Copyright (C) 2011-2012 ArkCORE2 <http://www.arkania.net/>
- * Copyright (C) 2010-2012 Project SkyFire <http://www.projectskyfire.org/> 
- *
+ * Copyright (C) 2011-2012 Project SkyFire <http://www.projectskyfire.org/>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -102,7 +99,7 @@ class npc_frostlord_ahune : public CreatureScript
 
         struct npc_frostlord_ahuneAI : public Scripted_NoMovementAI
         {
-            npc_frostlord_ahuneAI(Creature* c) : Scripted_NoMovementAI(c), _summons(me) { }
+            npc_frostlord_ahuneAI(Creature* creature) : Scripted_NoMovementAI(creature), _summons(me) { }
 
             void Reset()
             {

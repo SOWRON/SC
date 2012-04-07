@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2011-2012 ArkCORE2 <http://www.arkania.net/>
- * Copyright (C) 2010-2012 Project SkyFire <http://www.projectskyfire.org/> 
+ * Copyright (C) 2011-2012 Project SkyFire <http://www.projectskyfire.org/>
+ * Copyright (C) 2008-2012 TrinityCore <http://www.trinitycore.org/>
  * Copyright (C) 2006-2012 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -61,7 +61,7 @@ public:
 
     struct npc_sinkhole_kill_creditAI : public ScriptedAI
     {
-        npc_sinkhole_kill_creditAI(Creature* c) : ScriptedAI(c) {}
+        npc_sinkhole_kill_creditAI(Creature* creature) : ScriptedAI(creature) {}
 
         uint32 uiPhaseTimer;
         uint8  Phase;
@@ -169,7 +169,7 @@ public:
 
     struct npc_khunok_the_behemothAI : public ScriptedAI
     {
-        npc_khunok_the_behemothAI(Creature* c) : ScriptedAI(c) {}
+        npc_khunok_the_behemothAI(Creature* creature) : ScriptedAI(creature) {}
 
         void MoveInLineOfSight(Unit* who)
         {
@@ -346,7 +346,7 @@ public:
 
     struct mob_nerubar_victimAI : public ScriptedAI
     {
-        mob_nerubar_victimAI(Creature* c) : ScriptedAI(c) {}
+        mob_nerubar_victimAI(Creature* creature) : ScriptedAI(creature) {}
 
         void Reset() {}
         void EnterCombat(Unit* /*who*/) {}
@@ -570,7 +570,7 @@ public:
 
     struct npc_nesingwary_trapperAI : public ScriptedAI
     {
-        npc_nesingwary_trapperAI(Creature* c) : ScriptedAI(c) { c->SetVisible(false); }
+        npc_nesingwary_trapperAI(Creature* creature) : ScriptedAI(creature) { creature->SetVisible(false); }
 
         uint64 go_caribouGUID;
         uint8  Phase;
@@ -844,7 +844,7 @@ public:
 
     struct npc_nexus_drake_hatchlingAI : public FollowerAI //The spell who makes the npc follow the player is missing, also we can use FollowerAI!
     {
-        npc_nexus_drake_hatchlingAI(Creature* c) : FollowerAI(c) {}
+        npc_nexus_drake_hatchlingAI(Creature* creature) : FollowerAI(creature) {}
 
         uint64 HarpoonerGUID;
         bool WithRedDragonBlood;
@@ -1836,7 +1836,7 @@ public:
 
     struct npc_mootoo_the_youngerAI : public npc_escortAI
     {
-        npc_mootoo_the_youngerAI(Creature* c) : npc_escortAI(c) {}
+        npc_mootoo_the_youngerAI(Creature* creature) : npc_escortAI(creature) {}
 
         void Reset()
         {
@@ -1921,7 +1921,7 @@ public:
 
     struct npc_bonker_togglevoltAI : public npc_escortAI
     {
-        npc_bonker_togglevoltAI(Creature* c) : npc_escortAI(c) {}
+        npc_bonker_togglevoltAI(Creature* creature) : npc_escortAI(creature) {}
         uint32 Bonker_agro;
 
         void Reset()
@@ -2021,7 +2021,7 @@ public:
 
     struct npc_trapped_mammoth_calfAI : public ScriptedAI
     {
-        npc_trapped_mammoth_calfAI(Creature* c) : ScriptedAI(c) {}
+        npc_trapped_mammoth_calfAI(Creature* creature) : ScriptedAI(creature) {}
 
         uint32 uiTimer;
         bool bStarted;
@@ -2108,7 +2108,7 @@ public:
 
     struct npc_magmoth_crusherAI : public ScriptedAI
     {
-        npc_magmoth_crusherAI(Creature* c) : ScriptedAI(c) {}
+        npc_magmoth_crusherAI(Creature* creature) : ScriptedAI(creature) {}
 
         void JustDied(Unit* killer)
         {
@@ -2144,7 +2144,7 @@ public:
 
     struct npc_seaforium_depth_chargeAI : public ScriptedAI
     {
-        npc_seaforium_depth_chargeAI(Creature* c) : ScriptedAI(c) {}
+        npc_seaforium_depth_chargeAI(Creature* creature) : ScriptedAI(creature) {}
 
         uint32 uiExplosionTimer;
         void Reset()
@@ -2197,7 +2197,7 @@ public:
 
     struct npc_valiance_keep_cannoneerAI : public ScriptedAI
     {
-        npc_valiance_keep_cannoneerAI(Creature* c) : ScriptedAI(c) {}
+        npc_valiance_keep_cannoneerAI(Creature* creature) : ScriptedAI(creature) {}
 
         uint32 uiTimer;
 

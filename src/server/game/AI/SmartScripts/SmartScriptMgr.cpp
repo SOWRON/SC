@@ -48,7 +48,7 @@ void SmartWaypointMgr::LoadFromDB()
 
     waypoint_map.clear();
 
-    PreparedStatement* stmt = WorldDatabase.GetPreparedStatement(WORLD_SEL_SMARTAI_WP);
+    PreparedStatement* stmt = WorldDatabase.GetPreparedStatement(WORLD_LOAD_SMARTAI_WP);
     PreparedQueryResult result = WorldDatabase.Query(stmt);
 
     if (!result)
@@ -113,7 +113,7 @@ void SmartAIMgr::LoadSmartAIFromDB()
     for (uint8 i = 0; i < SMART_SCRIPT_TYPE_MAX; i++)
         mEventMap[i].clear();  //Drop Existing SmartAI List
 
-    PreparedStatement* stmt = WorldDatabase.GetPreparedStatement(WORLD_SEL_SMART_SCRIPTS);
+    PreparedStatement* stmt = WorldDatabase.GetPreparedStatement(WORLD_LOAD_SMART_SCRIPTS);
     PreparedQueryResult result = WorldDatabase.Query(stmt);
 
     if (!result)
@@ -199,6 +199,7 @@ void SmartAIMgr::LoadSmartAIFromDB()
         temp.event.raw.param4 = fields[11].GetUInt32();
 
         temp.action.type = (SMART_ACTION)fields[12].GetUInt8();
+
         temp.action.raw.param1 = fields[13].GetUInt32();
         temp.action.raw.param2 = fields[14].GetUInt32();
         temp.action.raw.param3 = fields[15].GetUInt32();
@@ -820,6 +821,7 @@ bool SmartAIMgr::IsEventValid(SmartScriptHolder& e)
         case SMART_ACTION_SET_MANA:
         case SMART_ACTION_GO_SET_LOOT_STATE:
         case SMART_ACTION_SEND_TARGET_TO_TARGET:
+        case SMART_ACTION_CHARACTER_SAVE:
             break;
         default:
             sLog->outErrorDb("SmartAIMgr: Not handled action_type(%u), event_type(%u), Entry %d SourceType %u Event %u, skipped.", e.GetActionType(), e.GetEventType(), e.entryOrGuid, e.GetScriptType(), e.event_id);

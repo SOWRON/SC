@@ -57,7 +57,7 @@ class RASocket: public ACE_Svc_Handler<ACE_SOCK_STREAM, ACE_MT_SYNCH>
 
     private:
         /// Minimum security level required to connect
-        uint8 _minLevel;
+        uint8 iMinLevel;
 };
 #endif
 /// @}

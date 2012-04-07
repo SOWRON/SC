@@ -96,7 +96,7 @@ uint32 CreatureTemplate::GetRandomValidModelId() const
     if (Modelid3) modelIDs[c++] = Modelid3;
     if (Modelid4) modelIDs[c++] = Modelid4;
 
-    return ((c>0) ? modelIDs[urand(0, c-1)] : 0);
+    return ((c > 0) ? modelIDs[urand(0, c-1)] : 0);
 }
 
 uint32 CreatureTemplate::GetFirstValidModelId() const
@@ -743,17 +743,19 @@ bool Creature::Create(uint32 guidlow, Map* map, uint32 phaseMask, uint32 Entry, 
         return false;
     }
 
+    //! Relocate before CreateFromProto, to initialize coords and allow
+    //! returning correct zone id for selecting OutdoorPvP/Battlefield script
     Relocate(x, y, z, ang);
+
+    //oX = x;     oY = y;    dX = x;    dY = y;    _moveTime = 0;    _startMove = 0;
+    if (!CreateFromProto(guidlow, Entry, vehId, team, data))
+        return false;
 
     if (!IsPositionValid())
     {
         sLog->outError("Creature::Create(): given coordinates for creature (guidlow %d, entry %d) are not valid (X: %f, Y: %f, Z: %f, O: %f)", guidlow, Entry, x, y, z, ang);
         return false;
     }
-
-    //oX = x;     oY = y;    dX = x;    dY = y;    _moveTime = 0;    _startMove = 0;
-    if (!CreateFromProto(guidlow, Entry, vehId, team, data))
-        return false;
 
     switch (GetCreatureTemplate()->rank)
     {
@@ -1067,34 +1069,32 @@ void Creature::SaveToDB(uint32 mapid, uint8 spawnMask, uint32 phaseMask)
     // update in DB
     SQLTransaction trans = WorldDatabase.BeginTransaction();
 
-    PreparedStatement* stmt = WorldDatabase.GetPreparedStatement(WORLD_DEL_CREATURE);
-    stmt->setUInt32(0, _DBTableGuid);
-    trans->Append(stmt);
+    trans->PAppend("DELETE FROM creature WHERE guid = '%u'", _DBTableGuid);
 
-    uint8 index = 0;
+    std::ostringstream ss;
+    ss << "INSERT INTO creature VALUES ("
+        << _DBTableGuid << ','
+        << GetEntry() << ','
+        << mapid << ','
+        << uint32(spawnMask) << ','                         // cast to prevent save as symbol
+        << uint16(GetPhaseMask()) << ','                    // prevent out of range error
+        << displayId << ','
+        << GetEquipmentId() << ','
+        << GetPositionX() << ','
+        << GetPositionY() << ','
+        << GetPositionZ() << ','
+        << GetOrientation() << ','
+        << _respawnDelay << ','                             //respawn time
+        << (float) _respawnradius << ','                    //spawn distance (float)
+        << (uint32) (0) << ','                              //currentwaypoint
+        << GetHealth() << ','                               //curhealth
+        << GetPower(POWER_MANA) << ','                      //curmana
+        << GetDefaultMovementType() << ','                  //default movement generator type
+        << npcflag << ','
+        << unit_flags << ','
+        << dynamicflags << ')';
 
-    stmt = WorldDatabase.GetPreparedStatement(WORLD_INS_CREATURE);
-    stmt->setUInt32(index++, _DBTableGuid);
-    stmt->setUInt32(index++, GetEntry());
-    stmt->setUInt16(index++, uint16(mapid));
-    stmt->setUInt8(index++, spawnMask);
-    stmt->setUInt16(index++, uint16(GetPhaseMask()));
-    stmt->setUInt32(index++, displayId);
-    stmt->setInt32(index++, int32(GetEquipmentId()));
-    stmt->setFloat(index++, GetPositionX());
-    stmt->setFloat(index++, GetPositionY());
-    stmt->setFloat(index++, GetPositionZ());
-    stmt->setFloat(index++, GetOrientation());
-    stmt->setUInt32(index++, _respawnDelay);
-    stmt->setFloat(index++, _respawnradius);
-    stmt->setUInt32(index++, 0);
-    stmt->setUInt32(index++, GetHealth());
-    stmt->setUInt32(index++, GetPower(POWER_MANA));
-    stmt->setUInt8(index++, uint8(GetDefaultMovementType()));
-    stmt->setUInt32(index++, npcflag);
-    stmt->setUInt32(index++, unit_flags);
-    stmt->setUInt32(index, dynamicflags);
-    trans->Append(stmt);
+    trans->Append(ss.str().c_str());
 
     WorldDatabase.CommitTransaction(trans);
 }
@@ -1367,23 +1367,10 @@ void Creature::DeleteFromDB()
     sObjectMgr->DeleteCreatureData(_DBTableGuid);
 
     SQLTransaction trans = WorldDatabase.BeginTransaction();
-
-    PreparedStatement* stmt = WorldDatabase.GetPreparedStatement(WORLD_DEL_CREATURE);
-    stmt->setUInt32(0, _DBTableGuid);
-    trans->Append(stmt);
-
-    stmt = WorldDatabase.GetPreparedStatement(WORLD_DEL_CREATURE_ADDON);
-    stmt->setUInt32(0, _DBTableGuid);
-    trans->Append(stmt);
-
-    stmt = WorldDatabase.GetPreparedStatement(WORLD_DEL_GAME_EVENT_CREATURE);
-    stmt->setUInt32(0, _DBTableGuid);
-    trans->Append(stmt);
-
-    stmt = WorldDatabase.GetPreparedStatement(WORLD_DEL_GAME_EVENT_MODEL_EQUIP);
-    stmt->setUInt32(0, _DBTableGuid);
-    trans->Append(stmt);
-
+    trans->PAppend("DELETE FROM creature WHERE guid = '%u'", _DBTableGuid);
+    trans->PAppend("DELETE FROM creature_addon WHERE guid = '%u'", _DBTableGuid);
+    trans->PAppend("DELETE FROM game_event_creature WHERE guid = '%u'", _DBTableGuid);
+    trans->PAppend("DELETE FROM game_event_model_equip WHERE guid = '%u'", _DBTableGuid);
     WorldDatabase.CommitTransaction(trans);
 }
 
@@ -1684,7 +1671,7 @@ SpellInfo const* Creature::reachWithSpellAttack(Unit* victim)
                 (spellInfo->Effects[j].Effect == SPELL_EFFECT_INSTAKILL)            ||
                 (spellInfo->Effects[j].Effect == SPELL_EFFECT_ENVIRONMENTAL_DAMAGE) ||
                 (spellInfo->Effects[j].Effect == SPELL_EFFECT_HEALTH_LEECH)
-)
+                )
             {
                 bcontinue = false;
                 break;
@@ -1734,7 +1721,8 @@ SpellInfo const* Creature::reachWithSpellCure(Unit* victim)
                 break;
             }
         }
-        if (bcontinue) continue;
+        if (bcontinue)
+            continue;
 
         if (spellInfo->ManaCost > uint32(GetPower(POWER_MANA)))
             continue;
@@ -2413,7 +2401,7 @@ bool Creature::SetWalk(bool enable)
 
     WorldPacket data(enable ? SMSG_SPLINE_MOVE_SET_WALK_MODE : SMSG_SPLINE_MOVE_SET_RUN_MODE, 9);
     data.append(GetPackGUID());
-    SendMessageToSet(&data, true);
+    SendMessageToSet(&data, false);
     return true;
 }
 
@@ -2424,6 +2412,6 @@ bool Creature::SetLevitate(bool enable)
 
     WorldPacket data(enable ? SMSG_SPLINE_MOVE_GRAVITY_DISABLE : SMSG_SPLINE_MOVE_GRAVITY_ENABLE, 9);
     data.append(GetPackGUID());
-    SendMessageToSet(&data, true);
+    SendMessageToSet(&data, false);
     return true;
 }

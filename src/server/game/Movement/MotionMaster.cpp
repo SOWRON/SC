@@ -73,9 +73,10 @@ MotionMaster::~MotionMaster()
     // clear ALL movement generators (including default)
     while (!empty())
     {
-        MovementGenerator *curr = top();
+        MovementGenerator* curr = top();
         pop();
-        if (curr) DirectDelete(curr);
+        if (!isStatic(curr))
+            delete curr;
     }
 }
 

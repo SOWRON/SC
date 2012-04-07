@@ -80,15 +80,8 @@ void AchievementMgr::Reset()
 void AchievementMgr::DeleteFromDB(uint32 lowguid)
 {
     SQLTransaction trans = CharacterDatabase.BeginTransaction();
-
-    PreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_DEL_CHAR_ACHIEVEMENT);
-    stmt->setUInt32(0, lowguid);
-    trans->Append(stmt);
-
-    stmt = CharacterDatabase.GetPreparedStatement(CHAR_DEL_CHAR_ACHIEVEMENT_PROGRESS);
-    stmt->setUInt32(0, lowguid);
-    trans->Append(stmt);
-
+    trans->PAppend("DELETE FROM character_achievement WHERE guid = %u", lowguid);
+    trans->PAppend("DELETE FROM character_achievement_progress WHERE guid = %u", lowguid);
     CharacterDatabase.CommitTransaction(trans);
 }
 
@@ -649,7 +642,7 @@ void AchievementGlobalMgr::LoadAchievementCriteriaData()
             continue;
         }
 
-        uint32 dataType = fields[1].GetUInt8();
+        uint32 dataType = fields[1].GetUInt32();
         const char* scriptName = fields[4].GetCString();
         uint32 scriptId = 0;
         if (strcmp(scriptName, "")) // not empty

@@ -636,7 +636,7 @@ void WorldSession::SendAuthWaitQue(uint32 position)
 
 void WorldSession::LoadGlobalAccountData()
 {
-    PreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_SEL_ACCOUNT_DATA);
+    PreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_LOAD_ACCOUNT_DATA);
     stmt->setUInt32(0, GetAccountId());
     LoadAccountData(CharacterDatabase.Query(stmt), GLOBAL_CACHE_MASK);
 }
@@ -679,7 +679,7 @@ void WorldSession::SetAccountData(AccountDataType type, time_t time_, std::strin
     if ((1 << type) & GLOBAL_CACHE_MASK)
     {
         id = GetAccountId();
-        index = CHAR_REP_ACCOUNT_DATA;
+        index = CHAR_SET_ACCOUNT_DATA;
     }
     else
     {
@@ -688,7 +688,7 @@ void WorldSession::SetAccountData(AccountDataType type, time_t time_, std::strin
             return;
 
         id = m_GUIDLow;
-        index = CHAR_REP_PLAYER_ACCOUNT_DATA;
+        index = CHAR_SET_PLAYER_ACCOUNT_DATA;
     }
 
     PreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(index);
@@ -1033,7 +1033,6 @@ void WorldSession::InitializeQueryCallbackParameters()
 void WorldSession::ProcessQueryCallbacks()
 {
     PreparedQueryResult result;
-    QueryResult result_old;
 
     //! HandleCharEnumOpcode
     if (_charEnumCallback.ready())
@@ -1088,35 +1087,34 @@ void WorldSession::ProcessQueryCallbacks()
     if (_sendStabledPetCallback.IsReady())
     {
         uint64 param = _sendStabledPetCallback.GetParam();
-        _sendStabledPetCallback.GetResult(result_old);
-        SendStablePetCallback(result_old, param);
+        _sendStabledPetCallback.GetResult(result);
+        SendStablePetCallback(result, param);
         _sendStabledPetCallback.FreeResult();
     }
 
     //- HandleStablePet
-    if (_stablePetCallback.IsReady())
+    if (_stablePetCallback.ready())
     {
-        uint32 param = _stablePetCallback.GetParam();
-        _stablePetCallback.GetResult(result_old);
-        HandleStablePetCallback(result_old);
-        _stablePetCallback.FreeResult();
+        _stablePetCallback.get(result);
+        HandleStablePetCallback(result);
+        _stablePetCallback.cancel();
     }
 
     //- HandleUnstablePet
     if (_unstablePetCallback.IsReady())
     {
         uint32 param = _unstablePetCallback.GetParam();
-        _unstablePetCallback.GetResult(result_old);
-        HandleUnstablePetCallback(result_old, param);
+        _unstablePetCallback.GetResult(result);
+        HandleUnstablePetCallback(result, param);
         _unstablePetCallback.FreeResult();
     }
 
     //- HandleStableSwapPet
     if (_stableSwapCallback.IsReady())
     {
-        uint8 param = _stableSwapCallback.GetParam();
-        _stableSwapCallback.GetResult(result_old);
-        HandleStableSwapPetCallback(result_old, param);
+        uint32 param = _stableSwapCallback.GetParam();
+        _stableSwapCallback.GetResult(result);
+        HandleStableSwapPetCallback(result, param);
         _stableSwapCallback.FreeResult();
     }
 }

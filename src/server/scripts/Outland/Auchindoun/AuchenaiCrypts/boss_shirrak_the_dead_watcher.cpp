@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2011-2012 ArkCORE2 <http://www.arkania.net/>
- * Copyright (C) 2010-2012 Project SkyFire <http://www.projectskyfire.org/> 
+ * Copyright (C) 2011-2012 Project SkyFire <http://www.projectskyfire.org/>
+ * Copyright (C) 2008-2012 TrinityCore <http://www.trinitycore.org/>
  * Copyright (C) 2006-2012 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -53,7 +53,7 @@ public:
 
     struct boss_shirrak_the_dead_watcherAI : public ScriptedAI
     {
-        boss_shirrak_the_dead_watcherAI(Creature* c) : ScriptedAI(c)
+        boss_shirrak_the_dead_watcherAI(Creature* creature) : ScriptedAI(creature)
         {
         }
 
@@ -170,7 +170,7 @@ public:
 
     struct mob_focus_fireAI : public ScriptedAI
     {
-        mob_focus_fireAI(Creature* c) : ScriptedAI(c)
+        mob_focus_fireAI(Creature* creature) : ScriptedAI(creature)
         {
         }
 

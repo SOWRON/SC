@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2011-2012 ArkCORE2 <http://www.arkania.net/>
- * Copyright (C) 2010-2012 Project SkyFire <http://www.projectskyfire.org/> 
+ * Copyright (C) 2011-2012 Project SkyFire <http://www.projectskyfire.org/>
+ * Copyright (C) 2008-2012 TrinityCore <http://www.trinitycore.org/>
  * Copyright (C) 2006-2012 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -79,7 +79,7 @@ public:
 
     struct npc_manaforge_control_consoleAI : public ScriptedAI
     {
-        npc_manaforge_control_consoleAI(Creature* c) : ScriptedAI(c) {}
+        npc_manaforge_control_consoleAI(Creature* creature) : ScriptedAI(creature) {}
 
         uint32 Event_Timer;
         uint32 Wave_Timer;
@@ -395,7 +395,7 @@ public:
 
     struct npc_commander_dawnforgeAI : public ScriptedAI
     {
-        npc_commander_dawnforgeAI(Creature* c) : ScriptedAI(c) { Reset (); }
+        npc_commander_dawnforgeAI(Creature* creature) : ScriptedAI(creature) { Reset (); }
 
         uint64 PlayerGUID;
         uint64 ardonisGUID;
@@ -746,7 +746,7 @@ public:
 
     struct mob_phase_hunterAI : public ScriptedAI
     {
-        mob_phase_hunterAI(Creature* c) : ScriptedAI(c) {}
+        mob_phase_hunterAI(Creature* creature) : ScriptedAI(creature) {}
 
         bool Weak;
         bool Materialize;
@@ -883,7 +883,7 @@ public:
 
     struct npc_bessyAI : public npc_escortAI
     {
-        npc_bessyAI(Creature* c) : npc_escortAI(c) {}
+        npc_bessyAI(Creature* creature) : npc_escortAI(creature) {}
 
         void JustDied(Unit* /*killer*/)
         {
