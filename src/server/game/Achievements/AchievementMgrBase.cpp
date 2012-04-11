@@ -45,7 +45,7 @@
 #include "Map.h"
 #include "InstanceScript.h"
 
-namespace Trinity
+namespace Skyfire
 {
     void AchievementChatBuilder::operator()(WorldPacket& data, LocaleConstant loc_idx)
     {

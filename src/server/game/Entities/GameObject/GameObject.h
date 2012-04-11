@@ -20,8 +20,8 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef TRINITYCORE_GAMEOBJECT_H
-#define TRINITYCORE_GAMEOBJECT_H
+#ifndef SKYFIRE_GAMEOBJECT_H
+#define SKYFIRE_GAMEOBJECT_H
 
 #include "Common.h"
 #include "SharedDefines.h"

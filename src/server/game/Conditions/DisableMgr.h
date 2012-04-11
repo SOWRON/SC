@@ -20,8 +20,8 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef TRINITY_DISABLEMGR_H
-#define TRINITY_DISABLEMGR_H
+#ifndef SKYFIRE_DISABLEMGR_H
+#define SKYFIRE_DISABLEMGR_H
 
 #include "Define.h"
 
@@ -65,4 +65,4 @@ namespace DisableMgr
     void CheckQuestDisables();
 }
 
-#endif //TRINITY_DISABLEMGR_H
+#endif //SKYFIRE_DISABLEMGR_H

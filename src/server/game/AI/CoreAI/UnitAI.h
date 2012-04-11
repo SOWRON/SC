@@ -20,8 +20,8 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef TRINITY_UNITAI_H
-#define TRINITY_UNITAI_H
+#ifndef SKYFIRE_UNITAI_H
+#define SKYFIRE_UNITAI_H
 
 #include "Define.h"
 #include <list>
@@ -172,7 +172,7 @@ class UnitAI
                 return NULL;
 
             if (targetType == SELECT_TARGET_NEAREST || targetType == SELECT_TARGET_FARTHEST)
-                targetList.sort(Trinity::ObjectDistanceOrderPred(me));
+                targetList.sort(Skyfire::ObjectDistanceOrderPred(me));
 
             switch (targetType)
             {
@@ -221,13 +221,13 @@ class UnitAI
                 return;
 
             if (targetType == SELECT_TARGET_NEAREST || targetType == SELECT_TARGET_FARTHEST)
-                targetList.sort(Trinity::ObjectDistanceOrderPred(me));
+                targetList.sort(Skyfire::ObjectDistanceOrderPred(me));
 
             if (targetType == SELECT_TARGET_FARTHEST || targetType == SELECT_TARGET_BOTTOMAGGRO)
                 targetList.reverse();
 
             if (targetType == SELECT_TARGET_RANDOM)
-                Trinity::RandomResizeList(targetList, maxTargets);
+                Skyfire::RandomResizeList(targetList, maxTargets);
             else
                 targetList.resize(maxTargets);
         }

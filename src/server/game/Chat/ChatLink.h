@@ -20,8 +20,8 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef TRINITYCORE_CHATLINK_H
-#define TRINITYCORE_CHATLINK_H
+#ifndef SKYFIRE_CHATLINK_H
+#define SKYFIRE_CHATLINK_H
 
 #include "SharedDefines.h"
 #include "DBCStructure.h"
@@ -175,4 +175,4 @@ private:
     std::istringstream _iss;
 };
 
-#endif// TRINITYCORE_CHATLINK_H
+#endif// SKYFIRE_CHATLINK_H
