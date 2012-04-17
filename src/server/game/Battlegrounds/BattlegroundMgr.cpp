@@ -1,8 +1,5 @@
 /*
- *
- * Copyright (C) 2011-2012 ArkCORE2 <http://www.arkania.net/>
- * Copyright (C) 2010-2012 Project SkyFire <http://www.projectskyfire.org/> 
- *
+ * Copyright (C) 2011-2012 Project SkyFire <http://www.projectskyfire.org/>
  * Copyright (C) 2008-2012 TrinityCore <http://www.trinitycore.org/>
  * Copyright (C) 2005-2012 MaNGOS <http://getmangos.com/>
  *
@@ -809,10 +806,10 @@ void BattlegroundMgr::CreateInitialBattlegrounds()
         CreateBattlegroundData data;
         data.bgTypeId = BattlegroundTypeId(bgTypeID_);
         data.IsArena = (bl->type == TYPE_ARENA);
-        data.MinPlayersPerTeam = fields[1].GetUInt32();
-        data.MaxPlayersPerTeam = fields[2].GetUInt32();
-        data.LevelMin = fields[3].GetUInt32();
-        data.LevelMax = fields[4].GetUInt32();
+        data.MinPlayersPerTeam = fields[1].GetUInt16();
+        data.MaxPlayersPerTeam = fields[2].GetUInt16();
+        data.LevelMin = fields[3].GetUInt8();
+        data.LevelMax = fields[4].GetUInt8();
         //check values from DB
         if (data.MaxPlayersPerTeam == 0 || data.MinPlayersPerTeam == 0 || data.MinPlayersPerTeam > data.MaxPlayersPerTeam)
         {
