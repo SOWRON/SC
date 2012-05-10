@@ -49,7 +49,7 @@ extern int m_ServiceStatus;
 #endif
 
 /// Handle worldserver's termination signals
-class WorldServerSignalHandler : public Skyfire::SignalHandler
+class WorldServerSignalHandler : public SkyFire::SignalHandler
 {
     public:
         virtual void HandleSignal(int SigNum)

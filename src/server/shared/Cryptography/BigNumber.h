@@ -97,6 +97,5 @@ class BigNumber
 
         // This mutex only controls thread-safe access to AsByteArray() and should be replaced with a thread-safe implementation of BigNumber
         ACE_Mutex _lock;
-
 };
 #endif

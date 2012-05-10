@@ -1345,7 +1345,7 @@ public:
             case GOSSIP_OPTION_LEARNDUALSPEC:
                 if (player->GetSpecsCount() == 1 && !(player->getLevel() < sWorld->getIntConfig(CONFIG_MIN_DUALSPEC_LEVEL)))
                 {
-                    if (!player->HasEnoughMoney(10000000))
+                    if (!player->HasEnoughMoney(100000))
                     {
                         player->SendBuyError(BUY_ERR_NOT_ENOUGHT_MONEY, 0, 0, 0);
                         player->PlayerTalkClass->SendCloseGossip();
@@ -1353,7 +1353,7 @@ public:
                     }
                     else
                     {
-                        player->ModifyMoney(-10000000);
+                        player->ModifyMoney(-100000);
 
                         // Cast spells that teach dual spec
                         // Both are also ImplicitTarget self and must be cast by player
@@ -1977,8 +1977,8 @@ public:
             DespawnTimer = 0;
             // Find victim of Summon Gargoyle spell
             std::list<Unit*> targets;
-            Skyfire::AnyUnfriendlyUnitInObjectRangeCheck u_check(me, me, 30);
-            Skyfire::UnitListSearcher<Skyfire::AnyUnfriendlyUnitInObjectRangeCheck> searcher(me, targets, u_check);
+            SkyFire::AnyUnfriendlyUnitInObjectRangeCheck u_check(me, me, 30);
+            SkyFire::UnitListSearcher<SkyFire::AnyUnfriendlyUnitInObjectRangeCheck> searcher(me, targets, u_check);
             me->VisitNearbyObject(30, searcher);
             for (std::list<Unit*>::const_iterator iter = targets.begin(); iter != targets.end(); ++iter)
                 if ((*iter)->GetAura(49206, ownerGuid))
@@ -3115,8 +3115,8 @@ class npc_power_word_barrier : public CreatureScript
 
            //Check friendly entities
            std::list<Unit*> targets;
-            Skyfire::AnyFriendlyUnitInObjectRangeCheck u_check(me, me, 7.0f);
-            Skyfire::UnitListSearcher<Skyfire::AnyFriendlyUnitInObjectRangeCheck> searcher(me, targets, u_check);
+            SkyFire::AnyFriendlyUnitInObjectRangeCheck u_check(me, me, 7.0f);
+            SkyFire::UnitListSearcher<SkyFire::AnyFriendlyUnitInObjectRangeCheck> searcher(me, targets, u_check);
 
             me->VisitNearbyObject(7.0f, searcher);
             for (std::list<Unit*>::const_iterator iter = targets.begin(); iter != targets.end(); ++iter)

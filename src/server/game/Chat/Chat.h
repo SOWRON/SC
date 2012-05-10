@@ -20,8 +20,8 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef SKYFIRE_CHAT_H
-#define SKYFIRE_CHAT_H
+#ifndef SKYFIRECORE_CHAT_H
+#define SKYFIRECORE_CHAT_H
 
 #include "SharedDefines.h"
 #include "Player.h"
@@ -50,16 +50,16 @@ class ChatCommand
 class ChatHandler
 {
     public:
-        WorldSession* GetSession() { return _session; }
-        explicit ChatHandler(WorldSession* session) : _session(session) {}
-        explicit ChatHandler(Player* player) : _session(player->GetSession()) {}
+        WorldSession* GetSession() { return m_session; }
+        explicit ChatHandler(WorldSession* session) : m_session(session) {}
+        explicit ChatHandler(Player* player) : m_session(player->GetSession()) {}
         virtual ~ChatHandler() {}
 
         static void FillMessageData(WorldPacket* data, WorldSession* session, uint8 type, uint32 language, const char *channelName, uint64 target_guid, const char *message, Unit* speaker);
 
         void FillMessageData(WorldPacket* data, uint8 type, uint32 language, uint64 target_guid, const char* message)
         {
-            FillMessageData(data, _session, type, language, NULL, target_guid, message, NULL);
+            FillMessageData(data, m_session, type, language, NULL, target_guid, message, NULL);
         }
 
         void FillSystemMessageData(WorldPacket* data, const char* message)
@@ -89,7 +89,7 @@ class ChatHandler
 
         // function with different implementation for chat/console
         virtual bool isAvailable(ChatCommand const& cmd) const;
-        virtual std::string GetNameLink() const { return GetNameLink(_session->GetPlayer()); }
+        virtual std::string GetNameLink() const { return GetNameLink(m_session->GetPlayer()); }
         virtual bool needReportToTarget(Player* chr) const;
         virtual LocaleConstant GetSessionDbcLocale() const;
         virtual int GetSessionDbLocaleIndex() const;
@@ -118,7 +118,7 @@ class ChatHandler
         // select by arg (name/link) or in-game selection online/offline player
         bool extractPlayerTarget(char* args, Player** player, uint64* player_guid = NULL, std::string* player_name = NULL);
 
-        std::string playerLink(std::string const& name) const { return _session ? "|cffffffff|Hplayer:"+name+"|h["+name+"]|h|r" : name; }
+        std::string playerLink(std::string const& name) const { return m_session ? "|cffffffff|Hplayer:"+name+"|h["+name+"]|h|r" : name; }
         std::string GetNameLink(Player* chr) const { return playerLink(chr->GetName()); }
 
         GameObject* GetNearbyGameObject();
@@ -130,7 +130,7 @@ class ChatHandler
         static void SetLoadCommandTable(bool val){ load_command_table = val;};
 
     protected:
-        explicit ChatHandler() : _session(NULL) {}      // for CLI subclass
+        explicit ChatHandler() : m_session(NULL) {}      // for CLI subclass
         static bool SetDataForCommandInTable(ChatCommand* table, const char* text, uint32 security, std::string const& help, std::string const& fullcommand);
         bool ExecuteCommandInTable(ChatCommand* table, const char* text, const std::string& fullcmd);
         bool ShowHelpForCommand(ChatCommand* table, const char* cmd);
@@ -345,6 +345,8 @@ class ChatHandler
 
         bool HandleTempGameObjectCommand(const char* args);
 
+        bool HandleMapInfoCommand(const char* args);
+        bool HandleMapSetInfoCommand(const char* args);
         //! Development Commands
 
         /*bool HandleQuestAdd(const char * args);
@@ -382,7 +384,7 @@ class ChatHandler
     private:
         bool _HandleGMTicketResponseAppendCommand(const char* args, bool newLine);
 
-        WorldSession* _session;                           // != NULL for chat command call and NULL for CLI command
+        WorldSession* m_session;                           // != NULL for chat command call and NULL for CLI command
 
         // common global flag
         static bool load_command_table;

@@ -60,7 +60,7 @@ public:
 
         battleid = atoi(battleid_str);
 
-        Battlefield* bf = sBattlefieldMgr.GetBattlefieldByBattleId(battleid);
+        Battlefield* bf = sBattlefieldMgr->GetBattlefieldByBattleId(battleid);
 
         if (!bf)
             return false;
@@ -82,7 +82,7 @@ public:
 
         battleid = atoi(battleid_str);
 
-        Battlefield* bf = sBattlefieldMgr.GetBattlefieldByBattleId(battleid);
+        Battlefield* bf = sBattlefieldMgr->GetBattlefieldByBattleId(battleid);
 
         if (!bf)
             return false;
@@ -104,7 +104,7 @@ public:
 
         battleid = atoi(battleid_str);
 
-        Battlefield* bf = sBattlefieldMgr.GetBattlefieldByBattleId(battleid);
+        Battlefield* bf = sBattlefieldMgr->GetBattlefieldByBattleId(battleid);
 
         if (!bf)
             return false;
@@ -134,7 +134,7 @@ public:
 
         battleid = atoi(battleid_str);
 
-        Battlefield* bf = sBattlefieldMgr.GetBattlefieldByBattleId(battleid);
+        Battlefield* bf = sBattlefieldMgr->GetBattlefieldByBattleId(battleid);
 
         if (!bf)
             return false;
@@ -161,7 +161,7 @@ public:
 
         time = atoi(time_str);
 
-        Battlefield* bf = sBattlefieldMgr.GetBattlefieldByBattleId(battleid);
+        Battlefield* bf = sBattlefieldMgr->GetBattlefieldByBattleId(battleid);
 
         if (!bf)
             return false;

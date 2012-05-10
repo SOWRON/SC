@@ -30,7 +30,7 @@
 #include "Utilities/TypeList.h"
 #include <map>
 
-namespace Skyfire
+namespace SkyFire
 {
     /* ContainerMapList Helpers */
     // count functions

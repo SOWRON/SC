@@ -1190,12 +1190,13 @@ void Aura::HandleAuraSpecificMods(AuraApplication const* aurApp, Unit* caster, b
                 // Todo: This should be moved to similar function in spell::hit
                 else if (GetSpellInfo()->SpellFamilyFlags[0] & 0x01000000)
                 {
-                    // Polymorph Sound - Sheep && Penguin
+                    // Polymorph Sound - Sheep, Penguin and Monkey
                     if (GetSpellInfo()->SpellIconID == 82 && GetSpellInfo()->SpellVisual[0] == 12978)
                     {
-                        // Glyph of the Penguin
-                        if (caster->HasAura(52648))
+                        if (caster->HasAura(52648))                 // Glyph of the Penguin
                             caster->CastSpell(target, 61635, true);
+                        else if (caster->HasAura(57927))            // Glyph of the Monkey
+                                 caster->CastSpell(target, 89729, true);
                         else
                             caster->CastSpell(target, 61634, true);
                     }
@@ -2068,6 +2069,9 @@ bool Aura::IsProcTriggeredOnEvent(AuraApplication* aurApp, ProcEventInfo& eventI
     {
         if (GetSpellInfo()->EquippedItemClass == ITEM_CLASS_WEAPON)
         {
+            if (target->ToPlayer()->IsInShapeshiftForm())
+                return false;
+
             if (eventInfo.GetDamageInfo())
             {
                 WeaponAttackType attType = eventInfo.GetDamageInfo()->GetAttackType();
@@ -2343,7 +2347,7 @@ void Aura::CallScriptEffectCalcSpellModHandlers(AuraEffect const* aurEff, SpellM
     }
 }
 
-void Aura::CallScriptEffectAbsorbHandlers(AuraEffect* aurEff, AuraApplication const* aurApp, DamageInfo & dmgInfo, uint32 & absorbAmount, bool & /*defaultPrevented*/)
+void Aura::CallScriptEffectAbsorbHandlers(AuraEffect* aurEff, AuraApplication const* aurApp, DamageInfo & dmgInfo, uint32 & absorbAmount, bool& defaultPrevented)
 {
     for (std::list<AuraScript*>::iterator scritr = m_loadedScripts.begin(); scritr != m_loadedScripts.end() ; ++scritr)
     {
@@ -2354,6 +2358,7 @@ void Aura::CallScriptEffectAbsorbHandlers(AuraEffect* aurEff, AuraApplication co
             if ((*effItr).IsEffectAffected(m_spellInfo, aurEff->GetEffIndex()))
                 (*effItr).Call(*scritr, aurEff, dmgInfo, absorbAmount);
         }
+        defaultPrevented = (*scritr)->_IsDefaultActionPrevented();
         (*scritr)->_FinishScriptCall();
     }
 }
@@ -2487,15 +2492,15 @@ void UnitAura::FillTargetMap(std::map<Unit* , uint8> & targets, Unit* caster)
                     case SPELL_EFFECT_APPLY_AREA_AURA_FRIEND:
                     {
                         targetList.push_back(GetUnitOwner());
-                        Skyfire::AnyFriendlyUnitInObjectRangeCheck u_check(GetUnitOwner(), GetUnitOwner(), radius);
-                        Skyfire::UnitListSearcher<Skyfire::AnyFriendlyUnitInObjectRangeCheck> searcher(GetUnitOwner(), targetList, u_check);
+                        SkyFire::AnyFriendlyUnitInObjectRangeCheck u_check(GetUnitOwner(), GetUnitOwner(), radius);
+                        SkyFire::UnitListSearcher<SkyFire::AnyFriendlyUnitInObjectRangeCheck> searcher(GetUnitOwner(), targetList, u_check);
                         GetUnitOwner()->VisitNearbyObject(radius, searcher);
                         break;
                     }
                     case SPELL_EFFECT_APPLY_AREA_AURA_ENEMY:
                     {
-                        Skyfire::AnyAoETargetUnitInObjectRangeCheck u_check(GetUnitOwner(), GetUnitOwner(), radius); // No GetCharmer in searcher
-                        Skyfire::UnitListSearcher<Skyfire::AnyAoETargetUnitInObjectRangeCheck> searcher(GetUnitOwner(), targetList, u_check);
+                        SkyFire::AnyAoETargetUnitInObjectRangeCheck u_check(GetUnitOwner(), GetUnitOwner(), radius); // No GetCharmer in searcher
+                        SkyFire::UnitListSearcher<SkyFire::AnyAoETargetUnitInObjectRangeCheck> searcher(GetUnitOwner(), targetList, u_check);
                         GetUnitOwner()->VisitNearbyObject(radius, searcher);
                         break;
                     }
@@ -2554,20 +2559,20 @@ void DynObjAura::FillTargetMap(std::map<Unit* , uint8> & targets, Unit* /*caster
         if (GetSpellInfo()->Effects[effIndex].TargetB.GetTarget() == TARGET_DEST_DYNOBJ_ALLY
             || GetSpellInfo()->Effects[effIndex].TargetB.GetTarget() == TARGET_UNIT_DEST_AREA_ALLY)
         {
-            Skyfire::AnyFriendlyUnitInObjectRangeCheck u_check(GetDynobjOwner(), dynObjOwnerCaster, radius);
-            Skyfire::UnitListSearcher<Skyfire::AnyFriendlyUnitInObjectRangeCheck> searcher(GetDynobjOwner(), targetList, u_check);
+            SkyFire::AnyFriendlyUnitInObjectRangeCheck u_check(GetDynobjOwner(), dynObjOwnerCaster, radius);
+            SkyFire::UnitListSearcher<SkyFire::AnyFriendlyUnitInObjectRangeCheck> searcher(GetDynobjOwner(), targetList, u_check);
             GetDynobjOwner()->VisitNearbyObject(radius, searcher);
         }
         else if (GetSpellInfo()->Effects[effIndex].TargetB.GetTarget() == TARGET_DEST_DYNOBJ_ALL_UNITS)
         {
-            Skyfire::AnyUnitInObjectRangeCheck u_check(GetDynobjOwner(), radius);
-            Skyfire::UnitListSearcher<Skyfire::AnyUnitInObjectRangeCheck> searcher(GetDynobjOwner(), targetList, u_check);
+            SkyFire::AnyUnitInObjectRangeCheck u_check(GetDynobjOwner(), radius);
+            SkyFire::UnitListSearcher<SkyFire::AnyUnitInObjectRangeCheck> searcher(GetDynobjOwner(), targetList, u_check);
             GetDynobjOwner()->VisitNearbyObject(radius, searcher);
         }
         else
         {
-            Skyfire::AnyAoETargetUnitInObjectRangeCheck u_check(GetDynobjOwner(), dynObjOwnerCaster, radius);
-            Skyfire::UnitListSearcher<Skyfire::AnyAoETargetUnitInObjectRangeCheck> searcher(GetDynobjOwner(), targetList, u_check);
+            SkyFire::AnyAoETargetUnitInObjectRangeCheck u_check(GetDynobjOwner(), dynObjOwnerCaster, radius);
+            SkyFire::UnitListSearcher<SkyFire::AnyAoETargetUnitInObjectRangeCheck> searcher(GetDynobjOwner(), targetList, u_check);
             GetDynobjOwner()->VisitNearbyObject(radius, searcher);
         }
 

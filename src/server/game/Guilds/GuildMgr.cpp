@@ -98,7 +98,7 @@ Guild* GuildMgr::GetGuildByLeader(uint64 guid) const
 void GuildMgr::LoadGuilds()
 {
     // 1. Load all guilds
-    sLog->outString("Loading guilds definitions...");
+    sLog->outString("Loading Guilds...");
     {
         uint32 oldMSTime = getMSTime();
 
@@ -110,7 +110,7 @@ void GuildMgr::LoadGuilds()
 
         if (!result)
         {
-            sLog->outString(">> Loaded 0 guild definitions. DB table `guild` is empty.");
+            sLog->outString(">> Loaded 0 Guilds. DB table `guild` is empty.");
             sLog->outString();
             return;
         }
@@ -139,7 +139,7 @@ void GuildMgr::LoadGuilds()
             }
             while (result->NextRow());
 
-            sLog->outString(">> Loaded %u guild definitions in %u ms", count, GetMSTimeDiffToNow(oldMSTime));
+            sLog->outString(">> Loaded %u Guilds in %u ms", count, GetMSTimeDiffToNow(oldMSTime));
             sLog->outString();
         }
     }
@@ -436,6 +436,8 @@ uint32 GetXPForGuildLevel(uint8 level);
 
 void GuildMgr::LoadGuildRewards()
 {
+    uint32 oldMSTime = getMSTime();
+
     QueryResult result = WorldDatabase.Query("SELECT item_entry, price, achievement, standing FROM guild_rewards");
 
     if (!result)
@@ -458,8 +460,8 @@ void GuildMgr::LoadGuildRewards()
         mGuildRewards.push_back(reward);
 
         ++count;
-    }while (result->NextRow());
+    } while (result->NextRow());
 
+    sLog->outString(">> Loaded %u guild reward definitions in %u ms", count, GetMSTimeDiffToNow(oldMSTime));
     sLog->outString();
-    sLog->outString(">> Loaded %u guild reward definitions.");
 }

@@ -194,8 +194,8 @@ class spell_gen_cannibalize : public SpellScriptLoader
                 float max_range = GetSpellInfo()->GetMaxRange(false);
                 WorldObject* result = NULL;
                 // search for nearby enemy corpse in range
-                Skyfire::AnyDeadUnitSpellTargetInRangeCheck check(caster, max_range, GetSpellInfo(), TARGET_CHECK_ENEMY);
-                Skyfire::WorldObjectSearcher<Skyfire::AnyDeadUnitSpellTargetInRangeCheck> searcher(caster, result, check);
+                SkyFire::AnyDeadUnitSpellTargetInRangeCheck check(caster, max_range, GetSpellInfo(), TARGET_CHECK_ENEMY);
+                SkyFire::WorldObjectSearcher<SkyFire::AnyDeadUnitSpellTargetInRangeCheck> searcher(caster, result, check);
                 caster->GetMap()->VisitFirstFound(caster->m_positionX, caster->m_positionY, max_range, searcher);
                 if (!result)
                     return SPELL_FAILED_NO_EDIBLE_CORPSES;
@@ -281,7 +281,6 @@ class spell_gen_pet_summoned : public SpellScriptLoader
 {
     public:
         spell_gen_pet_summoned() : SpellScriptLoader("spell_gen_pet_summoned") { }
-
         class spell_gen_pet_summoned_SpellScript : public SpellScript
         {
             PrepareSpellScript(spell_gen_pet_summoned_SpellScript);

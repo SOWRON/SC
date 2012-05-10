@@ -877,7 +877,7 @@ class WorldObject : public Object, public WorldLocation
         bool CanDetectStealthOf(WorldObject const* obj) const;
 };
 
-namespace Skyfire
+namespace SkyFire
 {
     template<class T>
     void RandomResizeList(std::list<T> &_list, uint32 _size)

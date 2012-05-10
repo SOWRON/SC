@@ -172,7 +172,7 @@ class UnitAI
                 return NULL;
 
             if (targetType == SELECT_TARGET_NEAREST || targetType == SELECT_TARGET_FARTHEST)
-                targetList.sort(Skyfire::ObjectDistanceOrderPred(me));
+                targetList.sort(SkyFire::ObjectDistanceOrderPred(me));
 
             switch (targetType)
             {
@@ -221,13 +221,13 @@ class UnitAI
                 return;
 
             if (targetType == SELECT_TARGET_NEAREST || targetType == SELECT_TARGET_FARTHEST)
-                targetList.sort(Skyfire::ObjectDistanceOrderPred(me));
+                targetList.sort(SkyFire::ObjectDistanceOrderPred(me));
 
             if (targetType == SELECT_TARGET_FARTHEST || targetType == SELECT_TARGET_BOTTOMAGGRO)
                 targetList.reverse();
 
             if (targetType == SELECT_TARGET_RANDOM)
-                Skyfire::RandomResizeList(targetList, maxTargets);
+                SkyFire::RandomResizeList(targetList, maxTargets);
             else
                 targetList.resize(maxTargets);
         }

@@ -46,9 +46,8 @@ class Transaction
 
     private:
         bool _cleanedUp;
-
 };
-typedef Skyfire::AutoPtr<Transaction, ACE_Thread_Mutex> SQLTransaction;
+typedef SkyFire::AutoPtr<Transaction, ACE_Thread_Mutex> SQLTransaction;
 
 /*! Low level class*/
 class TransactionTask : public SQLOperation

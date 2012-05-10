@@ -1542,7 +1542,6 @@ void AuraEffect::HandleShapeshiftBoosts(Unit* target, bool apply) const
                         target->CastCustomSpell(target, 48420, &bp, NULL, NULL, true);
                     }
                 break;
-                case FORM_DIREBEAR:
                 case FORM_BEAR:
                     // Master Shapeshifter - Bear
                     if (AuraEffect const* aurEff = target->GetAuraEffect(48411,1))
@@ -1936,7 +1935,6 @@ void AuraEffect::HandleAuraModShapeshift(AuraApplication const* aurApp, uint8 mo
             break;
 
         case FORM_BEAR:                                     // 0x05
-        case FORM_DIREBEAR:                                 // 0x08
 
         case FORM_BATTLESTANCE:                             // 0x11
         case FORM_DEFENSIVESTANCE:                          // 0x12
@@ -1984,7 +1982,6 @@ void AuraEffect::HandleAuraModShapeshift(AuraApplication const* aurApp, uint8 mo
             case FORM_TRAVEL:
             case FORM_AQUA:
             case FORM_BEAR:
-            case FORM_DIREBEAR:
             case FORM_FLIGHT_EPIC:
             case FORM_FLIGHT:
             case FORM_MOONKIN:
@@ -2022,7 +2019,6 @@ void AuraEffect::HandleAuraModShapeshift(AuraApplication const* aurApp, uint8 mo
             {
                 case FORM_CAT:
                 case FORM_BEAR:
-                case FORM_DIREBEAR:
                 {
                     // get furor proc chance
                     int32 FurorChance = 0;
@@ -2039,7 +2035,6 @@ void AuraEffect::HandleAuraModShapeshift(AuraApplication const* aurApp, uint8 mo
                         }
                         break;
                         case FORM_BEAR:
-                        case FORM_DIREBEAR:
                         if (irand(0, 99) < FurorChance)
                             target->CastSpell(target, 17057, true);
                         default:
@@ -2083,7 +2078,6 @@ void AuraEffect::HandleAuraModShapeshift(AuraApplication const* aurApp, uint8 mo
         {
             // Nordrassil Harness - bonus
             case FORM_BEAR:
-            case FORM_DIREBEAR:
             case FORM_CAT:
                 if (AuraEffect* dummy = target->GetAuraEffect(37315, 0))
                     target->CastSpell(target, 37316, true, NULL, dummy);
@@ -2345,6 +2339,8 @@ void AuraEffect::HandleAuraTransform(AuraApplication const* aurApp, uint8 mode, 
                         if (Unit* caster = GetCaster())
                             if (caster->HasAura(52648))         // Glyph of the Penguin
                                 model_id = 26452;
+                        else if (caster->HasAura(57927))         // Glyph of the Monkey
+                                model_id = 21362;
 
                     target->SetDisplayId(model_id);
 
@@ -2462,8 +2458,8 @@ void AuraEffect::HandleFeignDeath(AuraApplication const* aurApp, uint8 mode, boo
         */
 
         UnitList targets;
-        Skyfire::AnyUnfriendlyUnitInObjectRangeCheck u_check(target, target, target->GetMap()->GetVisibilityRange());
-        Skyfire::UnitListSearcher<Skyfire::AnyUnfriendlyUnitInObjectRangeCheck> searcher(target, targets, u_check);
+        SkyFire::AnyUnfriendlyUnitInObjectRangeCheck u_check(target, target, target->GetMap()->GetVisibilityRange());
+        SkyFire::UnitListSearcher<SkyFire::AnyUnfriendlyUnitInObjectRangeCheck> searcher(target, targets, u_check);
         target->VisitNearbyObject(target->GetMap()->GetVisibilityRange(), searcher);
         for (UnitList::iterator iter = targets.begin(); iter != targets.end(); ++iter)
         {
@@ -2584,7 +2580,7 @@ void AuraEffect::HandleAuraModDisarm(AuraApplication const* aurApp, uint8 mode, 
         target->RemoveFlag(field, flag);
 
     // Handle damage modification, shapeshifted druids are not affected
-    if (target->GetTypeId() == TYPEID_PLAYER)
+    if (target->GetTypeId() == TYPEID_PLAYER && !target->IsInShapeshiftForm())
     {
         if (Item* pItem = target->ToPlayer()->GetItemByPos(INVENTORY_SLOT_BAG_0, slot))
         {
@@ -4892,24 +4888,44 @@ void AuraEffect::HandleAuraDummy(AuraApplication const* aurApp, uint8 mode, bool
             }
             switch (GetId())
             {
+                case 94315:  // Early Frost
+                {
+                    if (caster && GetEffIndex() == 0)
+                    {
+                        if (AuraEffect* aurEff = caster->GetDummyAuraEffect(SPELLFAMILY_MAGE, 189, 0))
+                        {
+                            uint32 spell_Id = 0;
+                            switch (aurEff->GetId())
+                            {
+                                case 83049:
+                                    spell_Id = 83162;
+                                    break;
+                                case 83050:
+                                    spell_Id = 83239;
+                                    break;
+                            }
+
+                            if(spell_Id && !caster->GetAura(spell_Id))
+                                caster->CastSpell(caster, spell_Id, true, NULL, aurEff);
+                        }
+                    }
+                    break;
+                }
                 case 1515:                                      // Tame beast
                     // FIX_ME: this is 2.0.12 threat effect replaced in 2.1.x by dummy aura, must be checked for correctness
                     if (caster && target->CanHaveThreatList())
                         target->AddThreat(caster, 10.0f);
                     break;
                 case 13139:                                     // net-o-matic
-                    // root to self part of (root_target->charge->root_self sequence
                     if (caster)
                         caster->CastSpell(caster, 13138, true, NULL, this);
                     break;
-                    // Guardian of Ancient Kings - Retribution
-                case 86698:
+                case 86698:  // Guardian of Ancient Kings - Retribution
                 {
                     caster->CastSpell(caster, 86701, true);
                     break;
                 }
-                    // Guardian of Ancient Kings - Holy
-                case 86669:
+                case 86669:  // Guardian of Ancient Kings - Holy
                 {
                     caster->CastSpell(caster, 86674, true);
                     break;
@@ -5214,7 +5230,7 @@ void AuraEffect::HandleAuraDummy(AuraApplication const* aurApp, uint8 mode, bool
                                 if (Battleground* bg = target->ToPlayer()->GetBattleground())
                                     bg->RemovePlayerFromResurrectQueue(target->GetGUID());
 
-                                if (Battlefield* bf = sBattlefieldMgr.GetBattlefieldToZoneId(target->GetZoneId()))
+                                if (Battlefield* bf = sBattlefieldMgr->GetBattlefieldToZoneId(target->GetZoneId()))
                                     bf->RemovePlayerFromResurrectQueue(target->GetGUID());
                             }
                             break;
@@ -5637,6 +5653,9 @@ void AuraEffect::HandleAuraDummy(AuraApplication const* aurApp, uint8 mode, bool
 
                     if (apply)
                     {
+                        if (!target->IsInShapeshiftForm())
+                            break;
+
                         int32 bp0 = int32(target->CountPctFromMaxHealth(GetAmount()));
                         target->CastCustomSpell(target, 50322, &bp0, NULL, NULL, true);
                     }
@@ -6101,80 +6120,54 @@ void AuraEffect::HandleAuraOverrideSpells(AuraApplication const* aurApp, uint8 m
 
 void AuraEffect::HandleAuraSwapSpells(AuraApplication const * aurApp, uint8 mode, bool apply) const
 {
-    if (!(mode & (AURA_EFFECT_HANDLE_CHANGE_AMOUNT_MASK | AURA_EFFECT_HANDLE_STAT)))
+    if (!(mode & AURA_EFFECT_HANDLE_REAL))
         return;
 
     Player* target = aurApp->GetTarget()->ToPlayer();
-
     if (!target || !target->IsInWorld())
         return;
 
     uint32 overrideId = GetAmount();
-
     if (!overrideId)
         return;
+
     SpellEntry const* spell = sSpellStore.LookupEntry(overrideId);
     if (!spell)
         return;
+
     uint32 affspell = 0;
 
-    if (overrideId == 93402)            // Sunfire
+    PlayerSpellMap spellMap = target->GetSpellMap();
+    for (PlayerSpellMap::const_iterator itr = spellMap.begin() ; itr != spellMap.end() ; ++itr)
     {
-        if (target->HasAura(48517))     // Sunfire talent
-            affspell = 8921;            // Moonfire
-        else
-            return;
+        SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(itr->first);
+        if (!spellInfo)
+            continue;
+
+        if (overrideId != itr->first && (spellInfo->SpellFamilyFlags & GetSpellInfo()->Effects[GetEffIndex()].SpellClassMask))
+        {
+            affspell = itr->first;
+            break;
+        }
     }
 
-    if (overrideId == 91711)
-    {
-        if (target->HasAura(91713)) // The nether ward talent
-            affspell = 6229;
-        else
-            return;
-    }
-
-    if (overrideId == 92315) // Pyroblast
-        affspell = 11366;
-
-    if (overrideId == 82928) // Fire!
-        affspell = 19434;
-
-    if (overrideId == 89420) // Drain Life
-        affspell = 689;
-
-    if (overrideId == 81170) // Ravage
-        affspell = 6785;
-
-    if (overrideId == 93402) // Eclipse (Solar)
-        affspell = 8921;
-
-    if (overrideId == 92283) // Frostfire Orb Override
-        affspell = 82731;
-
-    if (overrideId == 88625) // Chakra: Serenity
-        affspell = 2050;
-
-    if (overrideId == 86213) // Soul Swap: Exhale
-        affspell = 86121;
-
-    if (overrideId == 88684 || overrideId == 88685) // Chakra
-        affspell = 88625;
+    if (!affspell)
+        return;
 
     if (apply)
     {
         target->AddTemporarySpell(overrideId);
-        WorldPacket data(SMSG_SUPERCEDED_SPELL, 4 + 4);
-        data << uint32(affspell); // here should be affected spell - not really necessary, after casting the real spell again, it auto-fixes
+        WorldPacket data(SMSG_SUPERCEDED_SPELL, 4 + 4); // Wrong opcode, we have to find the good one
+        data << uint32(affspell);
         data << uint32(overrideId);
         target->GetSession()->SendPacket(&data);
     }
     else
     {
         target->RemoveTemporarySpell(overrideId);
-        WorldPacket data(SMSG_SUPERCEDED_SPELL, 4 + 4);
+        WorldPacket data(SMSG_SUPERCEDED_SPELL, 4 + 4); // Wrong opcode, we have to find the good one
         data << uint32(overrideId);
-        data << uint32(affspell); // here should be affected spell - not really necessary, after casting the real spell again, it auto-fixes
+        data << uint32(affspell);
         target->GetSession()->SendPacket(&data);
     }
 }
@@ -6318,14 +6311,14 @@ void AuraEffect::HandlePeriodicDummyAuraTick(Unit* target, Unit* caster) const
                         // eff_radius == 0
                         float radius = GetSpellInfo()->GetMaxRange(false);
 
-                        CellCoord p(Skyfire::ComputeCellCoord(target->GetPositionX(), target->GetPositionY()));
+                        CellCoord p(SkyFire::ComputeCellCoord(target->GetPositionX(), target->GetPositionY()));
                         Cell cell(p);
 
-                        Skyfire::AnyUnfriendlyAttackableVisibleUnitInObjectRangeCheck u_check(target, radius);
-                        Skyfire::UnitListSearcher<Skyfire::AnyUnfriendlyAttackableVisibleUnitInObjectRangeCheck> checker(target, targets, u_check);
+                        SkyFire::AnyUnfriendlyAttackableVisibleUnitInObjectRangeCheck u_check(target, radius);
+                        SkyFire::UnitListSearcher<SkyFire::AnyUnfriendlyAttackableVisibleUnitInObjectRangeCheck> checker(target, targets, u_check);
 
-                        TypeContainerVisitor<Skyfire::UnitListSearcher<Skyfire::AnyUnfriendlyAttackableVisibleUnitInObjectRangeCheck>, GridTypeMapContainer > grid_object_checker(checker);
-                        TypeContainerVisitor<Skyfire::UnitListSearcher<Skyfire::AnyUnfriendlyAttackableVisibleUnitInObjectRangeCheck>, WorldTypeMapContainer > world_object_checker(checker);
+                        TypeContainerVisitor<SkyFire::UnitListSearcher<SkyFire::AnyUnfriendlyAttackableVisibleUnitInObjectRangeCheck>, GridTypeMapContainer > grid_object_checker(checker);
+                        TypeContainerVisitor<SkyFire::UnitListSearcher<SkyFire::AnyUnfriendlyAttackableVisibleUnitInObjectRangeCheck>, WorldTypeMapContainer > world_object_checker(checker);
 
                         cell.Visit(p, grid_object_checker,  *GetBase()->GetOwner()->GetMap(), *target, radius);
                         cell.Visit(p, world_object_checker, *GetBase()->GetOwner()->GetMap(), *target, radius);

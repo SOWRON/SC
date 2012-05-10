@@ -46,7 +46,6 @@
 #include "ScriptedEscortAI.h"
 #include "ScriptedFollowerAI.h"
 #include "ScriptedGossip.h"
-#include "ScriptedSimpleAI.h"
 #include "CreatureEventAI.h"
 #include "CreatureEventAIMgr.h"
 #include "CombatAI.h"
