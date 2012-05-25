@@ -2979,7 +2979,7 @@ public:
 // Uncomment this once guardians are able to cast spells
 // on owner at AI initialization and be able to cast spells based on owner's triggered spellcasts.
 
-enum GuardianSpellsAndEntries
+/* enum GuardianSpellsAndEntries
 {
     NPC_PROTECTION_GUARDIAN         = 46490,
     NPC_HOLY_GUARDIAN               = 46499,
@@ -3027,7 +3027,7 @@ public:
                 DoMeleeAttackIfReady();  // at least is what i saw on vids.
         }
 
-        void SpellHitTarget(Unit* /*target*/, SpellInfo const* spell)
+        void SpellHitTarget(Unit* /*target*, SpellInfo const* spell)
         {
             if (me->GetEntry() == NPC_HOLY_GUARDIAN) // Holy paladin guardian
             {
@@ -3050,7 +3050,7 @@ public:
     {
         return new npc_guardian_of_ancient_kingsAI(creature);
     }
-};
+};*/
 
 class npc_ring_of_frost : public CreatureScript
 {
@@ -3427,7 +3427,7 @@ void AddSC_npcs_special()
     new npc_tabard_vendor;
     new npc_experience;
     new npc_firework;
-    new npc_guardian_of_ancient_kings;
+    // new npc_guardian_of_ancient_kings;
     new npc_flame_orb;
     new npc_ring_of_frost;
     new npc_frostfire_orb;
