@@ -596,7 +596,7 @@ public:
         void HandleDummy(SpellEffIndex /*effIndex*/)
         {
             int32 damage = GetEffectValue();
-            Position const* pos = GetTargetDest();
+            Position const* pos = GetExplTargetDest();
             if (Unit* target = GetHitUnit())
             {
                 if (!target->HasAuraType(SPELL_AURA_DEFLECT_SPELLS)) // Deterrence

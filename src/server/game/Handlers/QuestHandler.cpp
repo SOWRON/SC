@@ -334,7 +334,7 @@ void WorldSession::HandleQuestgiverChooseRewardOpcode(WorldPacket & recv_data)
                     if (!(sScriptMgr->OnQuestReward(_player, (object->ToCreature()), quest, reward)))
                     {
                         // Send next quest
-                        if (Quest const* nextQuest = _player->GetNextQuest(guid , quest))
+                        if (Quest const* nextQuest = _player->GetNextQuest(guid, quest))
                         {
                             if (nextQuest->IsAutoAccept() && _player->CanAddQuest(nextQuest, true) && _player->CanTakeQuest(quest, true))
                             {
@@ -353,7 +353,7 @@ void WorldSession::HandleQuestgiverChooseRewardOpcode(WorldPacket & recv_data)
                     if (!sScriptMgr->OnQuestReward(_player, ((GameObject*)object), quest, reward))
                     {
                         // Send next quest
-                        if (Quest const* nextQuest = _player->GetNextQuest(guid , quest))
+                        if (Quest const* nextQuest = _player->GetNextQuest(guid, quest))
                         {
                             if (nextQuest->IsAutoAccept() && _player->CanAddQuest(nextQuest, true) && _player->CanTakeQuest(quest, true))
                             {

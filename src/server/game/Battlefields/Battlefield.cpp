@@ -971,7 +971,7 @@ void BfCapturePoint::SendChangePhase()
     SendUpdateWorldState(m_capturePoint->GetGOInfo()->capturePoint.worldstate3, m_neutralValuePct);
 }
 
-bool BfCapturePoint::SetCapturePointData(uint32 entry, uint32 /*map */ , float x, float y, float z, float o)
+bool BfCapturePoint::SetCapturePointData(uint32 entry, uint32 /*map */, float x, float y, float z, float o)
 {
     sLog->outDebug(LOG_FILTER_BATTLEFIELD, "Creating capture point %u", entry);
 
@@ -1052,7 +1052,7 @@ bool BfCapturePoint::Update(uint32 diff)
 
     if (fact_diff < 0)
     {
-        // horde is in majority, but it's already horde-controlled -> no change
+        // horde is in majority, but it's already horde-controlled ->no change
         if (m_State == BF_CAPTUREPOINT_OBJECTIVESTATE_HORDE && m_value <= -m_maxValue)
             return false;
 
@@ -1063,7 +1063,7 @@ bool BfCapturePoint::Update(uint32 diff)
     }
     else
     {
-        // ally is in majority, but it's already ally-controlled -> no change
+        // ally is in majority, but it's already ally-controlled ->no change
         if (m_State == BF_CAPTUREPOINT_OBJECTIVESTATE_ALLIANCE && m_value >= m_maxValue)
             return false;
 

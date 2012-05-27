@@ -2376,7 +2376,7 @@ void ObjectMgr::LoadItemTemplates()
             }
             if (itemTemplate.Unk0 != db2item->Unk0)
             {
-                sLog->outErrorDb("Item (Entry: %u) does not have a correct Unk0 (%i) , must be %i .", entry, itemTemplate.Unk0, db2item->Unk0);
+                sLog->outErrorDb("Item (Entry: %u) does not have a correct Unk0 (%i), must be %i .", entry, itemTemplate.Unk0, db2item->Unk0);
                 if (enforceDB2Attributes)
                     itemTemplate.Unk0 = db2item->Unk0;
             }
@@ -4408,7 +4408,7 @@ void ObjectMgr::LoadQuests()
                 }
                 if (!sFactionStore.LookupEntry(qinfo->RewRepFaction[j]))
                 {
-                    sLog->outErrorDb("Quest %u has `RewRepFaction%d` = %u but raw faction (faction.dbc) %u does not exist, quest will not reward reputation for this faction.", qinfo->GetQuestId(), j+1, qinfo->RewRepFaction[j] , qinfo->RewRepFaction[j]);
+                    sLog->outErrorDb("Quest %u has `RewRepFaction%d` = %u but raw faction (faction.dbc) %u does not exist, quest will not reward reputation for this faction.", qinfo->GetQuestId(), j+1, qinfo->RewRepFaction[j], qinfo->RewRepFaction[j]);
                     qinfo->RewRepFaction[j] = 0;            // quest will not reward this
                 }
             }
@@ -4500,7 +4500,7 @@ void ObjectMgr::LoadQuests()
             if (qNextItr == _questTemplates.end())
             {
                 sLog->outErrorDb("Quest %u has `NextQuestInChain` = %u but quest %u does not exist, quest chain will not work.",
-                    qinfo->GetQuestId(), qinfo->NextQuestInChain , qinfo->NextQuestInChain);
+                    qinfo->GetQuestId(), qinfo->NextQuestInChain, qinfo->NextQuestInChain);
                 qinfo->NextQuestInChain = 0;
             }
             else
@@ -4558,7 +4558,7 @@ void ObjectMgr::LoadQuests()
 
             if (!quest->HasFlag(QUEST_SKYFIRE_FLAGS_EXPLORATION_OR_EVENT))
             {
-                sLog->outErrorDb("Spell (id: %u) have SPELL_EFFECT_QUEST_COMPLETE for quest %u , but quest not have flag QUEST_SKYFIRE_FLAGS_EXPLORATION_OR_EVENT. Quest flags must be fixed, quest modified to enable objective.", spellInfo->Id, quest_id);
+                sLog->outErrorDb("Spell (id: %u) have SPELL_EFFECT_QUEST_COMPLETE for quest %u, but quest not have flag QUEST_SKYFIRE_FLAGS_EXPLORATION_OR_EVENT. Quest flags must be fixed, quest modified to enable objective.", spellInfo->Id, quest_id);
 
                 // this will prevent quest completing without objective
                 const_cast<Quest*>(quest)->SetFlag(QUEST_SKYFIRE_FLAGS_EXPLORATION_OR_EVENT);
@@ -7543,7 +7543,7 @@ void ObjectMgr::RemoveCreatureRespawnTime(uint32 loguid, uint32 instance)
 
 void ObjectMgr::DeleteCreatureData(uint32 guid)
 {
-    // remove mapid*cellid -> guid_set map
+    // remove mapid*cellid ->guid_set map
     CreatureData const* data = GetCreatureData(guid);
     if (data)
         RemoveCreatureFromGrid(guid, data);
@@ -7628,7 +7628,7 @@ void ObjectMgr::DeleteRespawnTimeForInstance(uint32 instance)
 
 void ObjectMgr::DeleteGOData(uint32 guid)
 {
-    // remove mapid*cellid -> guid_set map
+    // remove mapid*cellid ->guid_set map
     GameObjectData const* data = GetGOData(guid);
     if (data)
         RemoveGameobjectFromGrid(guid, data);
@@ -8010,7 +8010,7 @@ bool ObjectMgr::LoadSkyFireStrings(char const* table, int32 min_value, int32 max
             return false;
         }
 
-        // real range (max+1, min+1) example: (-10, -1000) -> -999...-10+1
+        // real range (max+1, min+1) example: (-10, -1000) ->-999...-10+1
         std::swap(start_value, end_value);
         ++start_value;
         ++end_value;

@@ -534,7 +534,7 @@ void Guild::Member::SetStats(Player* player)
         {
             uint32 skill = 0;
 
-            for (uint8 i = 0 ; i < MAX_SPELL_EFFECTS ; ++i)
+            for (uint8 i = 0; i < MAX_SPELL_EFFECTS; ++i)
             {
                 if (spellInfo->Effects[i].Effect == SPELL_EFFECT_SKILL)
                 {
@@ -873,7 +873,7 @@ Item* Guild::PlayerMoveItemData::StoreItem(SQLTransaction& trans, Item* pItem)
 void Guild::PlayerMoveItemData::LogBankEvent(SQLTransaction& trans, MoveItemData* pFrom, uint32 count) const
 {
     ASSERT(pFrom);
-    // Bank -> Char
+    // Bank ->Char
     m_pGuild->_LogBankEvent(trans, GUILD_BANK_LOG_WITHDRAW_ITEM, pFrom->GetContainer(), m_pPlayer->GetGUIDLow(),
         pFrom->GetItem()->GetEntry(), count);
 }
@@ -953,11 +953,11 @@ void Guild::BankMoveItemData::LogBankEvent(SQLTransaction& trans, MoveItemData* 
 {
     ASSERT(pFrom->GetItem());
     if (pFrom->IsBank())
-        // Bank -> Bank
+        // Bank ->Bank
         m_pGuild->_LogBankEvent(trans, GUILD_BANK_LOG_MOVE_ITEM, pFrom->GetContainer(), m_pPlayer->GetGUIDLow(),
             pFrom->GetItem()->GetEntry(), count, m_container);
     else
-        // Char -> Bank
+        // Char ->Bank
         m_pGuild->_LogBankEvent(trans, GUILD_BANK_LOG_DEPOSIT_ITEM, m_container, m_pPlayer->GetGUIDLow(),
             pFrom->GetItem()->GetEntry(), count);
 }
@@ -1272,7 +1272,7 @@ void Guild::UpdateMemberData(Player* player, uint8 dataid, uint32 value)
                     {
                         uint32 skill = 0;
 
-                        for (uint8 i = 0 ; i < MAX_SPELL_EFFECTS ; ++i)
+                        for (uint8 i = 0; i < MAX_SPELL_EFFECTS; ++i)
                         {
                             if (spellInfo->Effects[i].Effect == SPELL_EFFECT_SKILL)
                             {
@@ -1489,7 +1489,7 @@ void Guild::HandleQuery(WorldSession* session)
     data << uint64(guid);
     data << m_name;
 
-    for (uint8 i = 0 ; i < GUILD_RANKS_MAX_COUNT; ++i)              // Always show 10 ranks
+    for (uint8 i = 0; i < GUILD_RANKS_MAX_COUNT; ++i)              // Always show 10 ranks
     {
         if (i < _GetRanksSize())
             data << m_ranks[i].GetName();
@@ -3077,7 +3077,7 @@ void Guild::_SendBankContentUpdate(MoveItemData* pSrc, MoveItemData* pDest) cons
     {
         tabId = pSrc->GetContainer();
         slots.insert(pSrc->GetSlotId());
-        if (pDest->IsBank()) // B -> B
+        if (pDest->IsBank()) // B ->B
         {
             // Same tab - add destination slots to collection
             if (pDest->GetContainer() == pSrc->GetContainer())
@@ -3090,7 +3090,7 @@ void Guild::_SendBankContentUpdate(MoveItemData* pSrc, MoveItemData* pDest) cons
             }
         }
     }
-    else if (pDest->IsBank()) // C -> B
+    else if (pDest->IsBank()) // C ->B
     {
         tabId = pDest->GetContainer();
         pDest->CopySlots(slots);

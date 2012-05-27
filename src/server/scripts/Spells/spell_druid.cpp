@@ -196,7 +196,7 @@ class spell_dru_t10_restoration_4p_bonus : public SpellScriptLoader
                 }
                 else
                 {
-                    unitList.remove(GetTargetUnit());
+                    unitList.remove(GetExplTargetUnit());
                     std::list<Unit*> tempTargets;
                     for (std::list<Unit*>::const_iterator itr = unitList.begin(); itr != unitList.end(); ++itr)
                         if ((*itr)->GetTypeId() == TYPEID_PLAYER && GetCaster()->IsInRaidWith(*itr))
@@ -238,7 +238,7 @@ class spell_dru_starfall_aoe : public SpellScriptLoader
 
             void FilterTargets(std::list<Unit*>& unitList)
             {
-                unitList.remove(GetTargetUnit());
+                unitList.remove(GetExplTargetUnit());
             }
 
             void Register()

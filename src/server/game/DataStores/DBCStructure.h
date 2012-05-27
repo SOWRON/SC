@@ -1236,6 +1236,8 @@ struct ItemDamageEntry
 
 #define MAX_ITEM_EXT_COST_ITEMS         5
 #define MAX_ITEM_EXT_COST_CURRENCIES    5
+#define MAX_EXTENDED_COST_ITEMS         5
+#define MAX_EXTENDED_COST_CURRENCIES    5
 
 struct ItemExtendedCostEntry
 {
