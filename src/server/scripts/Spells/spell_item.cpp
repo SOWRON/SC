@@ -119,6 +119,60 @@ public:
     }
 };
 
+// http://www.wowhead.com/item=58149 Flask of Enhancement
+// 79637 Flask of Enhancement
+enum eFlaskOfEnhancementSpells
+{
+    SPELL_FLASK_OF_ENHANCEMENT_INT = 79640,
+    SPELL_FLASK_OF_ENHANCEMENT_AGI = 79639,
+    SPELL_FLASK_OF_ENHANCEMENT_STR = 79638,
+};
+
+class spell_item_flask_of_enhancement : public SpellScriptLoader
+{
+public:
+    spell_item_flask_of_enhancement() : SpellScriptLoader("spell_item_flask_of_enhancement") { }
+
+    class spell_item_flask_of_enhancement_SpellScript : public SpellScript
+    {
+    public:
+        PrepareSpellScript(spell_item_flask_of_enhancement_SpellScript)
+        bool Validate(SpellInfo const* /*spellEntry*/)
+        {
+            if (!sSpellMgr->GetSpellInfo(SPELL_FLASK_OF_ENHANCEMENT_INT) || !sSpellMgr->GetSpellInfo(SPELL_FLASK_OF_ENHANCEMENT_AGI) || !sSpellMgr->GetSpellInfo(SPELL_FLASK_OF_ENHANCEMENT_STR))
+                return false;
+            return true;
+        }
+
+        void HandleDummy(SpellEffIndex /*effIndex*/)
+        {
+            Unit* pCaster = GetCaster();
+            if (pCaster->GetTypeId() != TYPEID_PLAYER)
+                return;
+
+            uint32 spellId;
+            if (pCaster->GetStat(STAT_INTELLECT) >= pCaster->GetStat(STAT_AGILITY) && pCaster->GetStat(STAT_INTELLECT) >= pCaster->GetStat(STAT_STRENGTH))
+                spellId = SPELL_FLASK_OF_ENHANCEMENT_INT;
+            else if(pCaster->GetStat(STAT_AGILITY) >= pCaster->GetStat(STAT_INTELLECT) && pCaster->GetStat(STAT_AGILITY) >= pCaster->GetStat(STAT_STRENGTH))
+                spellId = SPELL_FLASK_OF_ENHANCEMENT_AGI;
+            else
+                spellId = SPELL_FLASK_OF_ENHANCEMENT_STR;
+
+            pCaster->CastSpell(pCaster, spellId, true, NULL);
+        }
+
+        void Register()
+        {
+            OnEffectHit += SpellEffectFn(spell_item_flask_of_enhancement_SpellScript::HandleDummy, EFFECT_0, SPELL_EFFECT_DUMMY);
+        }
+    };
+
+    SpellScript* GetSpellScript() const
+    {
+        return new spell_item_flask_of_enhancement_SpellScript();
+    }
+};
+
 // http://www.wowhead.com/item=47499 Flask of the North
 // 67019 Flask of the North
 enum eFlaskOfTheNorthSpells
@@ -1028,53 +1082,46 @@ enum AshbringerSounds
     SOUND_ASHBRINGER_9  = 8925,                             // "Truth is unknown to him"
     SOUND_ASHBRINGER_10 = 8926,                             // "Scarlet Crusade  is pure no longer"
     SOUND_ASHBRINGER_11 = 8927,                             // "Balnazzar's crusade corrupted my son"
-    SOUND_ASHBRINGER_12 = 8928,                             // "Kill them all!"
-
-    SPELL_ASHBRINGER    = 28282,                            // Ashbringer - Inflicts the will of the Ashbringer upon the wielder
-    SPELL_ASHBRINGER_TR = 28441                             // AB Effect 000
+    SOUND_ASHBRINGER_12 = 8928                              // "Kill them all!"
 };
 
 class spell_item_ashbringer : public SpellScriptLoader
 {
-    public:
-        spell_item_ashbringer() : SpellScriptLoader("spell_item_ashbringer") {}
+public:
+    spell_item_ashbringer() : SpellScriptLoader("spell_item_ashbringer") {}
 
-        class spell_item_ashbringer_SpellScript : public SpellScript
+    class spell_item_ashbringer_SpellScript : public SpellScript
+    {
+        PrepareSpellScript(spell_item_ashbringer_SpellScript);
+
+        bool Load()
         {
-            PrepareSpellScript(spell_item_ashbringer_SpellScript)
-            bool Validate(SpellInfo const* /*spellEntry*/)
-            {
-                if (!sSpellMgr->GetSpellInfo(SPELL_ASHBRINGER))
-                    return false;
-                return true;
-            }
-
-            void OnDummyEffect(SpellEffIndex effIndex)
-            {
-                PreventHitDefaultEffect(effIndex);
-
-                Unit* caster = GetCaster();
-                if (Player* player = caster->ToPlayer())
-                {
-                    uint32 sound_id = RAND( SOUND_ASHBRINGER_1, SOUND_ASHBRINGER_2, SOUND_ASHBRINGER_3, SOUND_ASHBRINGER_4, SOUND_ASHBRINGER_5, SOUND_ASHBRINGER_6,
-                                    SOUND_ASHBRINGER_7, SOUND_ASHBRINGER_8, SOUND_ASHBRINGER_9, SOUND_ASHBRINGER_10, SOUND_ASHBRINGER_11, SOUND_ASHBRINGER_12 );
-
-                    // Ashbringers effect (spellID 28441) retriggers every 5 seconds, with a chance of making it say one of the above 12 sounds
-                    if (urand(0, 60) < 1)
-                        player->PlayDirectSound(sound_id, player);
-                }
-            }
-
-            void Register()
-            {
-                OnEffectHit += SpellEffectFn(spell_item_ashbringer_SpellScript::OnDummyEffect, EFFECT_0, SPELL_EFFECT_DUMMY);
-            }
-        };
-
-        SpellScript* GetSpellScript() const
-        {
-            return new spell_item_ashbringer_SpellScript();
+            return GetCaster()->GetTypeId() == TYPEID_PLAYER;
         }
+
+        void OnDummyEffect(SpellEffIndex effIndex)
+        {
+            PreventHitDefaultEffect(effIndex);
+
+            Player* player = GetCaster()->ToPlayer();
+            uint32 sound_id = RAND( SOUND_ASHBRINGER_1, SOUND_ASHBRINGER_2, SOUND_ASHBRINGER_3, SOUND_ASHBRINGER_4, SOUND_ASHBRINGER_5, SOUND_ASHBRINGER_6,
+                SOUND_ASHBRINGER_7, SOUND_ASHBRINGER_8, SOUND_ASHBRINGER_9, SOUND_ASHBRINGER_10, SOUND_ASHBRINGER_11, SOUND_ASHBRINGER_12 );
+
+            // Ashbringer's effect (spellID 28441) re-triggers every 5 seconds, with a chance of making it say one of the above 12 sounds
+            if (urand(0, 60) < 1)
+                player->PlayDirectSound(sound_id, player);
+        }
+
+        void Register()
+        {
+            OnEffectHit += SpellEffectFn(spell_item_ashbringer_SpellScript::OnDummyEffect, EFFECT_0, SPELL_EFFECT_DUMMY);
+        }
+    };
+
+    SpellScript* GetSpellScript() const
+    {
+        return new spell_item_ashbringer_SpellScript();
+    }
 };
 
 enum MagicEater
@@ -1183,6 +1230,34 @@ class spell_item_refocus : public SpellScriptLoader
         }
 };
 
+class spell_item_muisek_vessel : public SpellScriptLoader
+{
+public:
+    spell_item_muisek_vessel() : SpellScriptLoader("spell_item_muisek_vessel") { }
+
+    class spell_item_muisek_vessel_SpellScript : public SpellScript
+    {
+        PrepareSpellScript(spell_item_muisek_vessel_SpellScript);
+
+        void HandleDummy(SpellEffIndex /*effIndex*/)
+        {
+            if (Creature* target = GetHitCreature())
+                if (target->isDead())
+                    target->ForcedDespawn();
+        }
+
+        void Register()
+        {
+            OnEffectHitTarget += SpellEffectFn(spell_item_muisek_vessel_SpellScript::HandleDummy, EFFECT_0, SPELL_EFFECT_DUMMY);
+        }
+    };
+
+    SpellScript* GetSpellScript() const
+    {
+        return new spell_item_muisek_vessel_SpellScript();
+    }
+};
+
 void AddSC_item_spell_scripts()
 {
     // 23074 Arcanite Dragonling
@@ -1195,6 +1270,7 @@ void AddSC_item_spell_scripts()
     new spell_item_trigger_spell("spell_item_mithril_mechanical_dragonling", SPELL_MITHRIL_MECHANICAL_DRAGONLING);
 
     new spell_item_deviate_fish();
+    new spell_item_flask_of_enhancement();
     new spell_item_flask_of_the_north();
     new spell_item_gnomish_death_ray();
     new spell_item_make_a_wish();
@@ -1216,4 +1292,5 @@ void AddSC_item_spell_scripts()
     new spell_item_ashbringer();
     new spell_magic_eater_food();
     new spell_item_refocus();
+    new spell_item_muisek_vessel();
 }

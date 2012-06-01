@@ -1778,7 +1778,7 @@ void WorldSession::HandleHearthAndResurrect(WorldPacket& /*recv_data*/)
     }
 
     AreaTableEntry const *atEntry = GetAreaEntryByAreaID(_player->GetAreaId());
-    if (!atEntry || !(atEntry->flags & AREA_FLAG_WINTERGRASP_2))
+    if (!atEntry || !(atEntry->flags & AREA_FLAG_CAN_HEARTH_AND_RES))
         return;
 
     _player->BuildPlayerRepop();

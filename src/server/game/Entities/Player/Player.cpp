@@ -15749,8 +15749,8 @@ void Player::RewardQuest(Quest const *quest, uint32 reward, Object* questGiver, 
     RewardedQuestSet::const_iterator rewItr = _RewardedQuests.find(quest_id);
     bool rewarded = (rewItr != _RewardedQuests.end());
 
-    // Not give XP in case already completed once repeatable quest
-    uint32 XP = rewarded ? 0 : uint32(quest->XPValue(this)*sWorld->getRate(RATE_XP_QUEST));
+    // Not give XP in case already completed once repeatable quest, but reward XP for daily, weekly and seasonal quests
+    uint32 XP = (rewarded && !quest->IsDaily() && !quest->IsWeekly() && !quest->IsSeasonal()) ? 0 : uint32(quest->XPValue(this)*sWorld->getRate(RATE_XP_QUEST));
 
     // handle SPELL_AURA_MOD_XP_QUEST_PCT auras
     Unit::AuraEffectList const& ModXPPctAuras = GetAuraEffectsByType(SPELL_AURA_MOD_XP_QUEST_PCT);
@@ -25105,7 +25105,7 @@ void Player::ResummonPetTemporaryUnSummonedIfAny()
     _temporaryUnsummonedPetNumber = 0;
 }
 
-bool Player::canSeeSpellClickOn(Creature const *c) const
+bool Player::canSeeSpellClickOn(Creature const* c) const
 {
     if (!c->HasFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_SPELLCLICK))
         return false;
@@ -25117,13 +25117,14 @@ bool Player::canSeeSpellClickOn(Creature const *c) const
     for (SpellClickInfoContainer::const_iterator itr = clickPair.first; itr != clickPair.second; ++itr)
     {
         if (!itr->second.IsFitToRequirements(this, c))
-            return true;
+            return false;
 
         ConditionList conds = sConditionMgr->GetConditionsForSpellClickEvent(c->GetEntry(), itr->second.spellId);
         ConditionSourceInfo info = ConditionSourceInfo(const_cast<Player*>(this), const_cast<Creature*>(c));
         if (!sConditionMgr->IsObjectMeetToConditions(info, conds))
             return false;
     }
+
     return true;
 }
 
